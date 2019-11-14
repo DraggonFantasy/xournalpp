@@ -12,16 +12,12 @@
 AddUndoAction::AddUndoAction(const PageRef& page, bool eraser)
  : UndoAction("AddUndoAction")
 {
-	XOJ_INIT_TYPE(AddUndoAction);
-
 	this->page = page;
 	this->eraser = eraser;
 }
 
 AddUndoAction::~AddUndoAction()
 {
-	XOJ_CHECK_TYPE(AddUndoAction);
-
 	for (GList* l = this->elements; l != nullptr; l = l->next)
 	{
 		auto e = (PageLayerPosEntry<Element>*) l->data;
@@ -33,23 +29,17 @@ AddUndoAction::~AddUndoAction()
 		delete e;
 	}
 	g_list_free(this->elements);
-
-	XOJ_RELEASE_TYPE(AddUndoAction)
 			;
 }
 
 void AddUndoAction::addElement(Layer* layer, Element* e, int pos)
 {
-	XOJ_CHECK_TYPE(AddUndoAction);
-
 	this->elements = g_list_insert_sorted(this->elements, new PageLayerPosEntry<Element> (layer, e, pos),
 										  (GCompareFunc) PageLayerPosEntry<Element>::cmp);
 }
 
-bool AddUndoAction::redo(Control*)
+auto AddUndoAction::redo(Control*) -> bool
 {
-	XOJ_CHECK_TYPE(AddUndoAction);
-
 	if (this->elements == nullptr)
 	{
 		g_warning("Could not undo AddUndoAction, there is nothing to undo");
@@ -69,10 +59,8 @@ bool AddUndoAction::redo(Control*)
 	return true;
 }
 
-bool AddUndoAction::undo(Control*)
+auto AddUndoAction::undo(Control*) -> bool
 {
-	XOJ_CHECK_TYPE(AddUndoAction);
-
 	if (this->elements == nullptr)
 	{
 		g_warning("Could not redo AddUndoAction, there is nothing to redo");
@@ -93,10 +81,8 @@ bool AddUndoAction::undo(Control*)
 	return true;
 }
 
-string AddUndoAction::getText()
+auto AddUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(AddUndoAction);
-
 	string text;
 
 	if (eraser)

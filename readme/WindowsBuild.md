@@ -12,13 +12,12 @@ This manual is not yet completed.
 ![Screenshot](main-win.png?raw=true "Xournal++ Screenshot on Win10")
 
 ## Preparation
-Install MSYS2
-Install NSIS to the standard Folder.
+Install [MSYS2](https://www.msys2.org/) to a short path without spaces.
+Install [NSIS](https://nsis.sourceforge.io/Download) to the standard Folder.
 
-Start Mingw-w64 64bit. (Always Check **64bit** not 32bit and not MSYS2)
+Start Mingw-w64 64bit. (Always check if it says **MINGW64** - not 32bit and not MSYS2)
 
-Update MSYS (do this multiple times,
-close Terminal after each update)
+Update MSYS2 (do this multiple times, close the Terminal after each update)
 
 ```bash
 pacman -Syuu
@@ -31,28 +30,25 @@ pacman -S git
 
 ## Install Build tools
 ```bash
-pacman -S mingw-w64-x86_64-cmake; \
-pacman -S make; \
-pacman -S mingw-w64-x86_64-toolchain; \
-pacman -S --needed base-devel mingw-w64-x86_64-toolchain \
-mingw-w64-x86_64-cmake
+pacman -S mingw-w64-x86_64-toolchain \
+          mingw-w64-x86_64-cmake \
+          mingw-w64-x86_64-make \
+          mingw-w64-x86_64-ninja \
+          patch \
+          make \
+          mingw-w64-x86_64-cppunit
 ```
-(this is a duplicate of the lines above, probably only this line is needed.
-Can anybody confirm this?)
 -> press enter multiple times / confirm all default values
-
-```bash
-pacman -S mingw-w64-x86_64-gcc
-```
 
 ## Install dependencies
 
 ```bash
-pacman -S mingw-w64-x86_64-poppler; \
-pacman -S mingw-w64-x86_64-gtk3; \
-pacman -S mingw-w64-x86_64-libsndfile; \
-pacman -S mingw-w64-x86_64-libzip
+pacman -S mingw-w64-x86_64-poppler \
+          mingw-w64-x86_64-gtk3 \
+          mingw-w64-x86_64-libsndfile \
+          mingw-w64-x86_64-libzip
 ```
+-> press enter multiple times / confirm all default values
 
 ## Get sources
 
@@ -78,8 +74,14 @@ windows-setup/build-lua.sh
 mkdir build
 cd build/
 cmake ..
-make
+cmake --build .
 ```
+
+You can run Xournal++ with
+```bash
+./src/xournalpp.exe
+```
+or package it in an installer (see below).
 
 ## Packaging and Setup
 Create the installer with

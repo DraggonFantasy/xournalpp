@@ -1,23 +1,14 @@
 #include "GladeSearchpath.h"
 
-GladeSearchpath::GladeSearchpath()
-{
-	XOJ_INIT_TYPE(GladeSearchpath);
-}
+GladeSearchpath::GladeSearchpath() = default;
 
 GladeSearchpath::~GladeSearchpath()
 {
-	XOJ_CHECK_TYPE(GladeSearchpath);
-
 	directories.clear();
-
-	XOJ_RELEASE_TYPE(GladeSearchpath);
 }
 
-string GladeSearchpath::findFile(string subdir, string file)
+auto GladeSearchpath::findFile(string subdir, string file) -> string
 {
-	XOJ_CHECK_TYPE(GladeSearchpath);
-
 	string filename;
 	if (subdir == "")
 	{
@@ -45,7 +36,7 @@ string GladeSearchpath::findFile(string subdir, string file)
 /**
  * @return The first search path
  */
-string GladeSearchpath::getFirstSearchPath()
+auto GladeSearchpath::getFirstSearchPath() -> string
 {
 	if (this->directories.size() < 1)
 	{
@@ -60,7 +51,5 @@ string GladeSearchpath::getFirstSearchPath()
  */
 void GladeSearchpath::addSearchDirectory(string directory)
 {
-	XOJ_CHECK_TYPE(GladeSearchpath);
-
 	this->directories.push_back(directory);
 }

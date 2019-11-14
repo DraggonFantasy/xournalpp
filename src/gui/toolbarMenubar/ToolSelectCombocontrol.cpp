@@ -11,9 +11,6 @@ ToolSelectCombocontrol::ToolSelectCombocontrol(ToolMenuHandler* toolMenuHandler,
    toolMenuHandler(toolMenuHandler),
    popup(gtk_menu_new())
 {
-
-	XOJ_INIT_TYPE(ToolSelectCombocontrol);
-
 	addMenuitem(_("Select Rectangle"), "rect-select", ACTION_TOOL_SELECT_RECT, GROUP_TOOL);
 	addMenuitem(_("Select Region"), "lasso", ACTION_TOOL_SELECT_REGION, GROUP_TOOL);
 	addMenuitem(_("Select Object"), "object-select", ACTION_TOOL_SELECT_OBJECT, GROUP_TOOL);
@@ -22,12 +19,7 @@ ToolSelectCombocontrol::ToolSelectCombocontrol(ToolMenuHandler* toolMenuHandler,
 	setPopupMenu(popup);
 }
 
-ToolSelectCombocontrol::~ToolSelectCombocontrol()
-{
-	XOJ_CHECK_TYPE(ToolSelectCombocontrol);
-
-	XOJ_RELEASE_TYPE(ToolSelectCombocontrol);
-}
+ToolSelectCombocontrol::~ToolSelectCombocontrol() = default;
 
 void ToolSelectCombocontrol::addMenuitem(string text, string icon, ActionType type, ActionGroup group)
 {
@@ -48,8 +40,6 @@ void ToolSelectCombocontrol::addMenuitem(string text, string icon, ActionType ty
 
 void ToolSelectCombocontrol::selected(ActionGroup group, ActionType action)
 {
-	XOJ_CHECK_TYPE(ToolSelectCombocontrol);
-
 	if (this->item)
 	{
 		if (!GTK_IS_TOGGLE_TOOL_BUTTON(this->item))
@@ -99,10 +89,8 @@ void ToolSelectCombocontrol::selected(ActionGroup group, ActionType action)
 	}
 }
 
-GtkToolItem* ToolSelectCombocontrol::newItem()
+auto ToolSelectCombocontrol::newItem() -> GtkToolItem*
 {
-	XOJ_CHECK_TYPE(ToolSelectCombocontrol);
-
 	GtkToolItem* it;
 
 	labelWidget = gtk_label_new(_("Select Rectangle"));

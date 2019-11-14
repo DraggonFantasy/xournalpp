@@ -17,29 +17,20 @@
 RenderJob::RenderJob(XojPageView* view)
  : view(view)
 {
-	XOJ_INIT_TYPE(RenderJob);
 }
 
 RenderJob::~RenderJob()
 {
-	XOJ_CHECK_TYPE(RenderJob);
-
-	this->view = NULL;
-
-	XOJ_RELEASE_TYPE(RenderJob);
+	this->view = nullptr;
 }
 
-void* RenderJob::getSource()
+auto RenderJob::getSource() -> void*
 {
-	XOJ_CHECK_TYPE(RenderJob);
-
 	return this->view;
 }
 
 void RenderJob::rerenderRectangle(Rectangle* rect)
 {
-	XOJ_CHECK_TYPE(RenderJob);
-
 	double zoom = view->xournal->getZoom();
 	Document* doc = view->xournal->getDocument();
 
@@ -96,8 +87,6 @@ void RenderJob::rerenderRectangle(Rectangle* rect)
 
 void RenderJob::run()
 {
-	XOJ_CHECK_TYPE(RenderJob);
-
 	double zoom = this->view->xournal->getZoom();
 
 	g_mutex_lock(&this->view->repaintRectMutex);
@@ -195,9 +184,7 @@ void RenderJob::repaintWidget(GtkWidget* widget)
 	});
 }
 
-JobType RenderJob::getType()
+auto RenderJob::getType() -> JobType
 {
-	XOJ_CHECK_TYPE(RenderJob);
-
 	return JOB_TYPE_RENDER;
 }

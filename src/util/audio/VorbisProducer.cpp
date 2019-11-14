@@ -3,20 +3,12 @@
 
 VorbisProducer::VorbisProducer(AudioQueue<float>* audioQueue) : audioQueue(audioQueue)
 {
-	XOJ_INIT_TYPE(VorbisProducer);
 }
 
-VorbisProducer::~VorbisProducer()
+VorbisProducer::~VorbisProducer() = default;
+
+auto VorbisProducer::start(std::string filename, unsigned int timestamp) -> bool
 {
-	XOJ_CHECK_TYPE(VorbisProducer);
-
-	XOJ_RELEASE_TYPE(VorbisProducer);
-}
-
-bool VorbisProducer::start(std::string filename, unsigned int timestamp)
-{
-	XOJ_CHECK_TYPE(VorbisProducer);
-
 	this->sfInfo.format = 0;
 	this->sfFile = sf_open(filename.c_str(), SFM_READ, &sfInfo);
 	if (sfFile == nullptr)
@@ -26,6 +18,7 @@ bool VorbisProducer::start(std::string filename, unsigned int timestamp)
 	}
 
 	sf_count_t seekPosition = this->sfInfo.samplerate / 1000 * timestamp;
+
 	if (seekPosition < this->sfInfo.frames)
 	{
 		sf_seek(this->sfFile, seekPosition, SEEK_SET);
@@ -37,37 +30,41 @@ bool VorbisProducer::start(std::string filename, unsigned int timestamp)
 
 	this->audioQueue->setAudioAttributes(this->sfInfo.samplerate, static_cast<unsigned int>(this->sfInfo.channels));
 
-	this->producerThread = new std::thread(
-			[&, filename]
+	this->producerThread = new std::thread([&, filename] {
+		size_t numFrames = 1;
+		auto sampleBuffer = new float[1024 * this->sfInfo.channels];
+		std::unique_lock<std::mutex> lock(audioQueue->syncMutex());
+
+		while (!this->stopProducer && numFrames > 0 && !this->audioQueue->hasStreamEnded())
+		{
+			numFrames = sf_readf_float(this->sfFile, sampleBuffer, 1024);
+
+			while (this->audioQueue->size() >= this->sample_buffer_size && !this->audioQueue->hasStreamEnded() &&
+			       !this->stopProducer)
 			{
-				long numSamples = 1;
-				auto sampleBuffer = new float[1024 * this->sfInfo.channels];
+				audioQueue->waitForConsumer(lock);
+			}
 
-				while (!this->stopProducer && numSamples > 0 && !this->audioQueue->hasStreamEnded())
-				{
-					numSamples = sf_readf_float(this->sfFile, sampleBuffer, 1024);
+			if (this->seekSeconds != 0)
+			{
+				sf_seek(this->sfFile, seekSeconds * this->sfInfo.samplerate, SEEK_CUR);
+				this->seekSeconds = 0;
+			}
 
-					while (this->audioQueue->size() >= this->sample_buffer_size && !this->audioQueue->hasStreamEnded() && !this->stopProducer)
-					{
-						std::this_thread::sleep_for(std::chrono::microseconds(100));
-					}
+			this->audioQueue->push(sampleBuffer, static_cast<size_t>(numFrames * this->sfInfo.channels));
+		}
+		this->audioQueue->signalEndOfStream();
 
-					this->audioQueue->push(sampleBuffer, static_cast<unsigned long>(numSamples * this->sfInfo.channels));
-				}
-				this->audioQueue->signalEndOfStream();
+		delete[] sampleBuffer;
+		sampleBuffer = nullptr;
 
-				delete[] sampleBuffer;
-				sampleBuffer = nullptr;
-
-				sf_close(this->sfFile);
-			});
+		sf_close(this->sfFile);
+	});
 	return true;
 }
 
 void VorbisProducer::abort()
 {
-	XOJ_CHECK_TYPE(VorbisProducer);
-
 	this->stopProducer = true;
 	// Wait for producer to finish
 	stop();
@@ -77,11 +74,15 @@ void VorbisProducer::abort()
 
 void VorbisProducer::stop()
 {
-	XOJ_CHECK_TYPE(VorbisProducer);
-
 	// Wait for producer to finish
 	if (this->producerThread && this->producerThread->joinable())
 	{
 		this->producerThread->join();
 	}
+}
+
+
+void VorbisProducer::seek(int seconds)
+{
+	this->seekSeconds = seconds;
 }

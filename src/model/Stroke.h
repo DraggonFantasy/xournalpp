@@ -16,8 +16,6 @@
 #include "LineStyle.h"
 #include "Element.h"
 
-#include <Arrayiterator.h>
-
 enum StrokeTool
 {
 	STROKE_TOOL_PEN, STROKE_TOOL_ERASER, STROKE_TOOL_HIGHLIGHTER
@@ -29,11 +27,16 @@ class Stroke : public AudioElement
 {
 public:
 	Stroke();
-	virtual ~Stroke();
+	Stroke(Stroke const&) = default;
+	Stroke(Stroke&&) = default;
+
+	Stroke& operator=(Stroke const&) = default;
+	Stroke& operator=(Stroke&&) = default;
+	~Stroke() override;
 
 public:
 	Stroke* cloneStroke() const;
-	virtual Element* clone();
+	Element* clone() override;
 
 	/**
 	 * Clone style attributes, but not the data (position, width etc.)
@@ -61,13 +64,13 @@ public:
 	 */
 	void setFill(int fill);
 
-	void addPoint(Point p);
+	void addPoint(const Point& p);
 	void setLastPoint(double x, double y);
 	void setFirstPoint(double x, double y);
-	void setLastPoint(Point p);
+	void setLastPoint(const Point& p);
 	int getPointCount() const;
 	void freeUnusedPointItems();
-	ArrayIterator<Point> pointIterator() const;
+	std::vector<Point> const& getPointVector() const;
 	Point getPoint(int index) const;
 	const Point* getPoints() const;
 
@@ -87,15 +90,15 @@ public:
 	void setLastPressure(double pressure);
 	void clearPressure();
 	void scalePressure(double factor);
-	
+
 	bool hasPressure() const;
 	double getAvgPressure() const;
 
-	virtual void move(double dx, double dy);
-	virtual void scale(double x0, double y0, double fx, double fy);
-	virtual void rotate(double x0, double y0, double xo, double yo, double th);
+	void move(double dx, double dy) override;
+	void scale(double x0, double y0, double fx, double fy) override;
+	void rotate(double x0, double y0, double xo, double yo, double th) override;
 
-	virtual bool isInSelection(ShapeContainer* container);
+	bool isInSelection(ShapeContainer* container) override;
 
 	EraseableStroke* getEraseable();
 	void setEraseable(EraseableStroke* eraseable);
@@ -104,32 +107,27 @@ public:
 
 public:
 	// Serialize interface
-	void serialize(ObjectOutputStream& out);
-	void readSerialized(ObjectInputStream& in);
+	void serialize(ObjectOutputStream& out) override;
+	void readSerialized(ObjectInputStream& in) override;
 
 protected:
-	virtual void calcSize();
-	void allocPointSize(int size);
+	void calcSize() override;
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	// The stroke width cannot be inherited from Element
 	double width = 0;
 
 	StrokeTool toolType = STROKE_TOOL_PEN;
 
 	// The array with the points
-	Point* points = NULL;
-	int pointCount = 0;
-	int pointAllocCount = 0;
+	std::vector<Point> points{};
 
 	/**
 	 * Dashed line
 	 */
 	LineStyle lineStyle;
 
-	EraseableStroke* eraseable = NULL;
+	EraseableStroke* eraseable = nullptr;
 
 	/**
 	 * Option to fill the shape:

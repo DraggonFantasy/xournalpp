@@ -11,10 +11,11 @@
 
 #pragma once
 
+#include <array>
+#include <memory>
 #include "Tool.h"
 #include "settings/Settings.h"
 
-#include <Arrayiterator.h>
 #include <XournalType.h>
 
 class LastSelectedTool;
@@ -105,7 +106,7 @@ public:
 	void copyCurrentConfig();
 	void restoreLastConfig();
 
-	ArrayIterator<Tool*> iterator();
+	std::array<std::unique_ptr<Tool>, TOOL_COUNT> const& getTools() const;
 
 	/**
 	 * Change the selection tools capabilities, depending on the selected elements
@@ -124,15 +125,13 @@ protected:
 	void initTools();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
-	Tool* tools[TOOL_COUNT] = { 0 };
-	Tool* current = NULL;
+	std::array<std::unique_ptr<Tool>, TOOL_COUNT> tools;
+	Tool* current = nullptr;
 
 	/**
 	 * Last selected tool, reference with color values etc.
 	 */
-	LastSelectedTool* lastSelectedTool = NULL;
+	LastSelectedTool* lastSelectedTool = nullptr;
 
 	EraserType eraserType = ERASER_TYPE_DEFAULT;
 
@@ -143,9 +142,9 @@ private:
 	 */
 	bool colorFound = false;
 
-	ToolListener* listener = NULL;
+	ToolListener* listener = nullptr;
 
-	ActionHandler* actionHandler = NULL;
+	ActionHandler* actionHandler = nullptr;
 
-	Settings* settings = NULL;
+	Settings* settings = nullptr;
 };

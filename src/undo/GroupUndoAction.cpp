@@ -3,34 +3,25 @@
 GroupUndoAction::GroupUndoAction()
  : UndoAction("GroupUndoAction")
 {
-	XOJ_INIT_TYPE(GroupUndoAction);
 }
 
 GroupUndoAction::~GroupUndoAction()
 {
-	XOJ_CHECK_TYPE(GroupUndoAction);
-
 	for (int i = actions.size() - 1; i >= 0; i--)
 	{
 		delete actions[i];
 	}
 
 	actions.clear();
-
-	XOJ_RELEASE_TYPE(GroupUndoAction);
 }
 
 void GroupUndoAction::addAction(UndoAction* action)
 {
-	XOJ_CHECK_TYPE(GroupUndoAction);
-
 	actions.push_back(action);
 }
 
-vector<PageRef> GroupUndoAction::getPages()
+auto GroupUndoAction::getPages() -> vector<PageRef>
 {
-	XOJ_CHECK_TYPE(GroupUndoAction);
-
 	vector<PageRef> pages;
 
 	for (UndoAction* a : actions)
@@ -62,23 +53,19 @@ vector<PageRef> GroupUndoAction::getPages()
 	return pages;
 }
 
-bool GroupUndoAction::redo(Control* control)
+auto GroupUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(GroupUndoAction);
-
 	bool result = true;
-	for (size_t i = 0; i < actions.size(); i++)
+	for (auto& action: actions)
 	{
-		result = result && actions[i]->redo(control);
+		result = result && action->redo(control);
 	}
 
 	return result;
 }
 
-bool GroupUndoAction::undo(Control* control)
+auto GroupUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(GroupUndoAction);
-
 	bool result = true;
 	for (int i = actions.size() - 1; i >= 0; i--)
 	{
@@ -88,10 +75,8 @@ bool GroupUndoAction::undo(Control* control)
 	return result;
 }
 
-string GroupUndoAction::getText()
+auto GroupUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(GroupUndoAction);
-
 	if (actions.size() == 0)
 	{
 		return "!! NOTHING !!";

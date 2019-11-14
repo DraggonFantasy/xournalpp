@@ -1,22 +1,18 @@
 #include "TextAttribute.h"
 #include <StringUtils.h>
 
+#include <utility>
+
 TextAttribute::TextAttribute(string name, string value)
- : XMLAttribute(name),
-   value(value)
+ : XMLAttribute(name)
+ , value(std::move(value))
 {
-	XOJ_INIT_TYPE(TextAttribute);
 }
 
-TextAttribute::~TextAttribute()
-{
-	XOJ_RELEASE_TYPE(TextAttribute);
-}
+TextAttribute::~TextAttribute() = default;
 
 void TextAttribute::writeOut(OutputStream* out)
 {
-	XOJ_CHECK_TYPE(TextAttribute);
-
 	string v = this->value;
 	StringUtils::replaceAllChars(v, {
 		replace_pair('&', "&amp;"),

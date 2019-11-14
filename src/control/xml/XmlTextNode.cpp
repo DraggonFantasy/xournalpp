@@ -2,44 +2,23 @@
 
 #include <StringUtils.h>
 
-XmlTextNode::XmlTextNode(const char* tag, const char* text) : XmlAudioNode(tag)
+XmlTextNode::XmlTextNode(const char* tag, std::string text)
+ : XmlAudioNode(tag)
+ , text(std::move(text))
 {
-	XOJ_INIT_TYPE(XmlTextNode);
-
-	this->text = g_strdup(text);
 }
 
 XmlTextNode::XmlTextNode(const char* tag) : XmlAudioNode(tag)
 {
-	XOJ_INIT_TYPE(XmlTextNode);
-
-	this->text = NULL;
-
-	XOJ_RELEASE_TYPE(XmlTextNode);
 }
 
-XmlTextNode::~XmlTextNode()
+void XmlTextNode::setText(std::string text)
 {
-	XOJ_CHECK_TYPE(XmlTextNode);
-
-	g_free(this->text);
-	this->text = NULL;
-
-	XOJ_RELEASE_TYPE(XmlTextNode);
-}
-
-void XmlTextNode::setText(const char* text)
-{
-	XOJ_CHECK_TYPE(XmlTextNode);
-
-	g_free(this->text);
-	this->text = g_strdup(text);
+	this->text = std::move(text);
 }
 
 void XmlTextNode::writeOut(OutputStream* out)
 {
-	XOJ_CHECK_TYPE(XmlTextNode);
-
 	out->write("<");
 	out->write(tag);
 	writeAttributes(out);

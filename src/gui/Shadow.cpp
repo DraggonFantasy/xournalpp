@@ -4,7 +4,7 @@
 
 Shadow* Shadow::instance = new Shadow();
 
-typedef const unsigned char* u8ptr;
+using u8ptr = const unsigned char*;
 
 Shadow::Shadow()
 {
@@ -38,10 +38,10 @@ Shadow::~Shadow()
 	cairo_surface_destroy(this->edgeBottomRight);
 	cairo_surface_destroy(this->edgeTopLeft);
 	cairo_surface_destroy(this->edgeTopRight);
-	this->edgeBottomLeft = NULL;
-	this->edgeBottomRight = NULL;
-	this->edgeTopLeft = NULL;
-	this->edgeTopRight = NULL;
+	this->edgeBottomLeft = nullptr;
+	this->edgeBottomRight = nullptr;
+	this->edgeTopLeft = nullptr;
+	this->edgeTopRight = nullptr;
 
 	if (this->left)
 	{
@@ -60,18 +60,18 @@ Shadow::~Shadow()
 		cairo_surface_destroy(this->bottom);
 	}
 
-	this->left = NULL;
-	this->top = NULL;
-	this->right = NULL;
-	this->bottom = NULL;
+	this->left = nullptr;
+	this->top = nullptr;
+	this->right = nullptr;
+	this->bottom = nullptr;
 }
 
-int Shadow::getShadowBottomRightSize()
+auto Shadow::getShadowBottomRightSize() -> int
 {
 	return shadowBottomRightSize;
 }
 
-int Shadow::getShadowTopLeftSize()
+auto Shadow::getShadowTopLeftSize() -> int
 {
 	return shadowTopLeftSize;
 }

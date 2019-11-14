@@ -6,11 +6,10 @@
 #include <i18n.h>
 #include <Util.h>
 
-GFile* ImageOpenDlg::show(GtkWindow* win, Settings* settings, bool localOnly, bool* attach)
+auto ImageOpenDlg::show(GtkWindow* win, Settings* settings, bool localOnly, bool* attach) -> GFile*
 {
-	GtkWidget* dialog = gtk_file_chooser_dialog_new(_("Open Image"), win, GTK_FILE_CHOOSER_ACTION_OPEN,
-													_("_Cancel"), GTK_RESPONSE_CANCEL,
-													_("_Open"), GTK_RESPONSE_OK, NULL);
+	GtkWidget* dialog = gtk_file_chooser_dialog_new(_("Open Image"), win, GTK_FILE_CHOOSER_ACTION_OPEN, _("_Cancel"),
+	                                                GTK_RESPONSE_CANCEL, _("_Open"), GTK_RESPONSE_OK, nullptr);
 
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), localOnly);
 
@@ -24,7 +23,7 @@ GFile* ImageOpenDlg::show(GtkWindow* win, Settings* settings, bool localOnly, bo
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), settings->getLastImagePath().c_str());
 	}
 
-	GtkWidget* cbAttach = NULL;
+	GtkWidget* cbAttach = nullptr;
 	if (attach)
 	{
 		cbAttach = gtk_check_button_new_with_label(_("Attach file to the journal"));
@@ -34,13 +33,13 @@ GFile* ImageOpenDlg::show(GtkWindow* win, Settings* settings, bool localOnly, bo
 
 	GtkWidget* image = gtk_image_new();
 	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog), image);
-	g_signal_connect(dialog, "update-preview", G_CALLBACK(updatePreviewCallback), NULL);
+	g_signal_connect(dialog, "update-preview", G_CALLBACK(updatePreviewCallback), nullptr);
 
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), win);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
 	{
 		gtk_widget_destroy(dialog);
-		return NULL;
+		return nullptr;
 	}
 	GFile* file = gtk_file_chooser_get_file(GTK_FILE_CHOOSER(dialog));
 	if (attach)
@@ -52,7 +51,7 @@ GFile* ImageOpenDlg::show(GtkWindow* win, Settings* settings, bool localOnly, bo
 
 	// e.g. from last used files, there is no folder selected
 	// in this case do not store the folder
-	if (folder != NULL)
+	if (folder != nullptr)
 	{
 		settings->setLastImagePath(folder);
 		g_free(folder);
@@ -65,14 +64,14 @@ GFile* ImageOpenDlg::show(GtkWindow* win, Settings* settings, bool localOnly, bo
 
 // Source: Empathy
 
-GdkPixbuf* ImageOpenDlg::pixbufScaleDownIfNecessary(GdkPixbuf* pixbuf, gint maxSize)
+auto ImageOpenDlg::pixbufScaleDownIfNecessary(GdkPixbuf* pixbuf, gint maxSize) -> GdkPixbuf*
 {
 	int width = gdk_pixbuf_get_width(pixbuf);
 	int height = gdk_pixbuf_get_height(pixbuf);
 
 	if (width > maxSize || height > maxSize)
 	{
-		double factor = (gdouble) maxSize / MAX(width, height);
+		double factor = (gdouble) maxSize / std::max(width, height);
 
 		width = width * factor;
 		height = height * factor;
@@ -89,7 +88,7 @@ void ImageOpenDlg::updatePreviewCallback(GtkFileChooser* fileChooser, void* user
 
 	if (filename)
 	{
-		GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(filename, nullptr);
 		GtkWidget* image = gtk_file_chooser_get_preview_widget(fileChooser);
 
 		if (pixbuf)

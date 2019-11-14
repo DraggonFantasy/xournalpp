@@ -5,11 +5,12 @@
 #include "model/Stroke.h"
 
 #include <cmath>
+#include "util/LoopUtil.h"
 
 /**
  * Create circle stroke for inertia
  */
-Stroke* CircleRecognizer::makeCircleShape(Stroke* originalStroke, Inertia& inertia)
+auto CircleRecognizer::makeCircleShape(Stroke* originalStroke, Inertia& inertia) -> Stroke*
 {
 	int npts = (int) (2 * inertia.rad());
 	if (npts < 12)
@@ -17,7 +18,7 @@ Stroke* CircleRecognizer::makeCircleShape(Stroke* originalStroke, Inertia& inert
 		npts = 12; // min. number of points
 	}
 
-	Stroke* s = new Stroke();
+	auto* s = new Stroke();
 	s->applyStyleFrom(originalStroke);
 
 	for (int i = 0; i <= npts; i++)
@@ -33,9 +34,13 @@ Stroke* CircleRecognizer::makeCircleShape(Stroke* originalStroke, Inertia& inert
 /**
  *  Test if we have a circle; inertia has been precomputed by caller
  */
-double CircleRecognizer::scoreCircle(Stroke* s, Inertia& inertia)
+auto CircleRecognizer::scoreCircle(Stroke* s, Inertia& inertia) -> double
 {
-	if (inertia.getMass() == 0.0)
+	double r0 = inertia.rad();
+	double divisor = inertia.getMass() * r0;
+
+	//Todo: test: std::abs(divisor) <= std::numeric_limits<double>::epsilon()
+	if (divisor == 0)
 	{
 		return 0;
 	}
@@ -43,32 +48,20 @@ double CircleRecognizer::scoreCircle(Stroke* s, Inertia& inertia)
 	double sum = 0.0;
 	double x0 = inertia.centerX();
 	double y0 = inertia.centerY();
-	double r0 = inertia.rad();
 
-	ArrayIterator<Point> it = s->pointIterator();
-
-	if (!it.hasNext())
+	auto const& pv = s->getPointVector();
+	for (auto pt_1st = begin(pv), pt_2nd = std::next(pt_1st), p_end_i = end(pv); pt_1st != p_end_i && pt_2nd != p_end_i;
+	     ++pt_2nd, ++pt_1st)
 	{
-		return 0;
-	}
-
-	Point p1 = it.next();
-
-	while (it.hasNext())
-	{
-		Point p2 = it.next();
-
-		double dm = hypot(p2.x - p1.x, p2.y - p1.y);
-		double deltar = hypot(p1.x - x0, p1.y - y0) - r0;
+		double dm = hypot(pt_2nd->x - pt_1st->x, pt_2nd->y - pt_1st->y);
+		double deltar = hypot(pt_1st->x - x0, pt_1st->y - y0) - r0;
 		sum += dm * fabs(deltar);
-
-		p1 = p2;
 	}
 
-	return sum / (inertia.getMass() * r0);
+	return sum / (divisor);
 }
 
-Stroke* CircleRecognizer::recognize(Stroke* stroke)
+auto CircleRecognizer::recognize(Stroke* stroke) -> Stroke*
 {
 	Inertia s;
 	s.calc(stroke->getPoints(), 0, stroke->getPointCount());
@@ -85,5 +78,5 @@ Stroke* CircleRecognizer::recognize(Stroke* stroke)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }

@@ -6,10 +6,14 @@
 #include <config.h>
 #include <i18n.h>
 
+#include <utility>
+
 class ToolDrawType {
 public:
 	ToolDrawType(string name, string icon, ActionType type)
-	 : name(name), icon(icon), type(type)
+	 : name(std::move(name))
+	 , icon(std::move(icon))
+	 , type(type)
 	{
 	}
 
@@ -23,8 +27,6 @@ ToolDrawCombocontrol::ToolDrawCombocontrol(ToolMenuHandler* toolMenuHandler, Act
  : ToolButton(handler, id, ACTION_TOOL_DRAW_RECT, GROUP_RULER, false, "rect-draw.png", _("Draw Rectangle")),
    toolMenuHandler(toolMenuHandler)
 {
-	XOJ_INIT_TYPE(ToolDrawCombocontrol);
-
 	setPopupMenu(gtk_menu_new());
 
 	drawTypes.push_back(new ToolDrawType(_("Draw Rectangle"),				"rect-draw",					ACTION_TOOL_DRAW_RECT   ));
@@ -42,22 +44,16 @@ ToolDrawCombocontrol::ToolDrawCombocontrol(ToolMenuHandler* toolMenuHandler, Act
 
 ToolDrawCombocontrol::~ToolDrawCombocontrol()
 {
-	XOJ_CHECK_TYPE(ToolDrawCombocontrol);
-
 	for (ToolDrawType* t : drawTypes)
 	{
 		delete t;
 	}
 	this->drawTypes.clear();
-	this->toolMenuHandler = NULL;
-
-	XOJ_RELEASE_TYPE(ToolDrawCombocontrol);
+	this->toolMenuHandler = nullptr;
 }
 
 void ToolDrawCombocontrol::createMenuItem(string name, string icon, ActionType type)
 {
-	XOJ_CHECK_TYPE(ToolDrawCombocontrol);
-
 	GtkWidget* menuItem =  gtk_menu_item_new ();
 	GtkWidget* box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_container_add(GTK_CONTAINER(box), gtk_image_new_from_icon_name(icon.c_str(), GTK_ICON_SIZE_SMALL_TOOLBAR));
@@ -71,8 +67,6 @@ void ToolDrawCombocontrol::createMenuItem(string name, string icon, ActionType t
 
 void ToolDrawCombocontrol::selected(ActionGroup group, ActionType action)
 {
-	XOJ_CHECK_TYPE(ToolDrawCombocontrol);
-
 	if (!this->item)
 	{
 		return;
@@ -105,10 +99,8 @@ void ToolDrawCombocontrol::selected(ActionGroup group, ActionType action)
 	}
 }
 
-GtkToolItem* ToolDrawCombocontrol::newItem()
+auto ToolDrawCombocontrol::newItem() -> GtkToolItem*
 {
-	XOJ_CHECK_TYPE(ToolDrawCombocontrol);
-
 	labelWidget = gtk_label_new(_("Draw Rectangle"));
 	iconWidget = gtk_image_new_from_icon_name(drawTypes[0]->icon.c_str(), GTK_ICON_SIZE_SMALL_TOOLBAR);
 

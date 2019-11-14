@@ -2,7 +2,12 @@
 
 #include <i18n.h>
 
-GtkWindow* defaultWindow = NULL;
+#ifdef _WIN32
+// Needed for help dialog workaround on Windows; see XojMsgBox::showHelp
+#include <shlwapi.h>
+#endif
+
+GtkWindow* defaultWindow = nullptr;
 
 /**
  * Set window for messages without window
@@ -15,15 +20,15 @@ void XojMsgBox::setDefaultWindow(GtkWindow* win)
 
 void XojMsgBox::showErrorToUser(GtkWindow* win, string msg)
 {
-	if (win == NULL)
+	if (win == nullptr)
 	{
 		win = defaultWindow;
 	}
 
-	GtkWidget* dialog = gtk_message_dialog_new_with_markup(win, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-											   NULL);
+	GtkWidget* dialog =
+	        gtk_message_dialog_new_with_markup(win, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, nullptr);
 	gtk_message_dialog_set_markup( GTK_MESSAGE_DIALOG (dialog), msg.c_str());
-	if (win != NULL)
+	if (win != nullptr)
 	{
 		gtk_window_set_transient_for(GTK_WINDOW(dialog), win);
 	}
@@ -31,7 +36,7 @@ void XojMsgBox::showErrorToUser(GtkWindow* win, string msg)
 	gtk_widget_destroy(dialog);
 }
 
-int XojMsgBox::showPluginMessage(string pluginName, string msg, map<int, string> button, bool error)
+auto XojMsgBox::showPluginMessage(string pluginName, string msg, map<int, string> button, bool error) -> int
 {
 	string header = string("Xournal++ Plugin «") + pluginName + "»";
 
@@ -40,11 +45,11 @@ int XojMsgBox::showPluginMessage(string pluginName, string msg, map<int, string>
 		header = "<b>Error in </b>" + header;
 	}
 
-	GtkWidget* dialog = gtk_message_dialog_new_with_markup(defaultWindow, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE,
-											   NULL);
+	GtkWidget* dialog = gtk_message_dialog_new_with_markup(defaultWindow, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
+	                                                       GTK_BUTTONS_NONE, nullptr);
 	gtk_message_dialog_set_markup( GTK_MESSAGE_DIALOG (dialog), header.c_str());
-	
-	if (defaultWindow != NULL)
+
+	if (defaultWindow != nullptr)
 	{
 		gtk_window_set_transient_for(GTK_WINDOW(dialog), defaultWindow);
 	}
@@ -65,11 +70,11 @@ int XojMsgBox::showPluginMessage(string pluginName, string msg, map<int, string>
 	return res;
 }
 
-int XojMsgBox::replaceFileQuestion(GtkWindow* win, string msg)
+auto XojMsgBox::replaceFileQuestion(GtkWindow* win, string msg) -> int
 {
 	GtkWidget* dialog = gtk_message_dialog_new(win, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 											   "%s", msg.c_str());
-	if (win != NULL)
+	if (win != nullptr)
 	{
 		gtk_window_set_transient_for(GTK_WINDOW(dialog), win);
 	}
@@ -84,7 +89,12 @@ int XojMsgBox::replaceFileQuestion(GtkWindow* win, string msg)
 
 void XojMsgBox::showHelp(GtkWindow* win)
 {
-	GError* error = NULL;
+#ifdef _WIN32
+	// gvfs is not in MSYS repositories, so we can't use gtk_show_uri.
+	// Instead, we use the native API instead.
+	ShellExecute(nullptr, "open", XOJ_HELP, nullptr, nullptr, SW_SHOW);
+#else
+	GError* error = nullptr;
 	gtk_show_uri(gtk_window_get_screen(win), XOJ_HELP, gtk_get_current_event_time(), &error);
 
 	if (error)
@@ -94,5 +104,6 @@ void XojMsgBox::showHelp(GtkWindow* win)
 
 		g_error_free(error);
 	}
+#endif
 }
 

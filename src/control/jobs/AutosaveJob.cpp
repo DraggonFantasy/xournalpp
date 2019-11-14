@@ -10,18 +10,12 @@
 AutosaveJob::AutosaveJob(Control* control)
  : control(control)
 {
-	XOJ_INIT_TYPE(AutosaveJob);
 }
 
-AutosaveJob::~AutosaveJob()
-{
-	XOJ_RELEASE_TYPE(AutosaveJob);
-}
+AutosaveJob::~AutosaveJob() = default;
 
 void AutosaveJob::afterRun()
 {
-	XOJ_CHECK_TYPE(AutosaveJob);
-
 	string msg = FS(_F("Error while autosaving: {1}") % this->error);
 	g_warning("%s", msg.c_str());
 	XojMsgBox::showErrorToUser(control->getGtkWindow(), msg);
@@ -29,8 +23,6 @@ void AutosaveJob::afterRun()
 
 void AutosaveJob::run()
 {
-	XOJ_CHECK_TYPE(AutosaveJob);
-
 	SaveHandler handler;
 
 	control->getUndoRedoHandler()->documentAutosaved();
@@ -73,9 +65,8 @@ void AutosaveJob::run()
 	}
 }
 
-JobType AutosaveJob::getType()
+auto AutosaveJob::getType() -> JobType
 {
-	XOJ_CHECK_TYPE(AutosaveJob);
 	return JOB_TYPE_AUTOSAVE;
 }
 

@@ -4,17 +4,11 @@ XmlAudioNode::XmlAudioNode(const char* tag)
 		: XmlNode(tag),
 		audioFilename("")
 {
-	XOJ_INIT_TYPE(XmlAudioNode);
 }
 
-XmlAudioNode::~XmlAudioNode()
-{
-	XOJ_CHECK_TYPE(XmlAudioNode);
+XmlAudioNode::~XmlAudioNode() = default;
 
-	XOJ_RELEASE_TYPE(XmlAudioNode);
-}
-
-string XmlAudioNode::getAudioFilename()
+auto XmlAudioNode::getAudioFilename() -> string
 {
 	return this->audioFilename;
 }

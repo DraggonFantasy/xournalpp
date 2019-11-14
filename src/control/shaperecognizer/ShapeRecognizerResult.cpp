@@ -5,15 +5,11 @@
 
 ShapeRecognizerResult::ShapeRecognizerResult(Stroke* result)
 {
-	XOJ_INIT_TYPE(ShapeRecognizerResult);
-
 	this->recognized = result;
 }
 
 ShapeRecognizerResult::ShapeRecognizerResult(Stroke* result, ShapeRecognizer* recognizer)
 {
-	XOJ_INIT_TYPE(ShapeRecognizerResult);
-
 	this->recognized = result;
 
 	for (int i = 0; i < recognizer->queueLength; i++)
@@ -29,17 +25,11 @@ ShapeRecognizerResult::ShapeRecognizerResult(Stroke* result, ShapeRecognizer* re
 
 ShapeRecognizerResult::~ShapeRecognizerResult()
 {
-	XOJ_CHECK_TYPE(ShapeRecognizerResult);
-
-	this->recognized = NULL;
-
-	XOJ_RELEASE_TYPE(ShapeRecognizerResult);
+	this->recognized = nullptr;
 }
 
 void ShapeRecognizerResult::addSourceStroke(Stroke* s)
 {
-	XOJ_CHECK_TYPE(ShapeRecognizerResult);
-
 	for (Stroke* elem : this->source)
 	{
 		if (s == elem)
@@ -54,16 +44,12 @@ void ShapeRecognizerResult::addSourceStroke(Stroke* s)
 	this->source.push_back(s);
 }
 
-Stroke* ShapeRecognizerResult::getRecognized()
+auto ShapeRecognizerResult::getRecognized() -> Stroke*
 {
-	XOJ_CHECK_TYPE(ShapeRecognizerResult);
-
 	return this->recognized;
 }
 
-vector<Stroke*>* ShapeRecognizerResult::getSources()
+auto ShapeRecognizerResult::getSources() -> vector<Stroke*>*
 {
-	XOJ_CHECK_TYPE(ShapeRecognizerResult);
-
 	return &this->source;
 }

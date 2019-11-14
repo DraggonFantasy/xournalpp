@@ -30,7 +30,7 @@ class ShapeContainer
 public:
 	virtual bool contains(double x, double y) = 0;
 
-	virtual ~ShapeContainer() { }
+	virtual ~ShapeContainer() = default;
 };
 
 class Element : public Serializeable
@@ -39,7 +39,7 @@ protected:
 	Element(ElementType type);
 
 public:
-	virtual ~Element();
+	~Element() override;
 
 public:
 	ElementType getType() const;
@@ -74,8 +74,6 @@ public:
 	virtual Element* clone() = 0;
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	virtual void calcSize() = 0;
 

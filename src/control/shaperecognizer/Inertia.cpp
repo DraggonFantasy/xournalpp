@@ -6,8 +6,6 @@
 
 Inertia::Inertia()
 {
-	XOJ_INIT_TYPE(Inertia);
-
 	this->mass = 0;
 	this->sx = 0;
 	this->sxx = 0;
@@ -18,35 +16,23 @@ Inertia::Inertia()
 
 Inertia::Inertia(const Inertia& inertia)
 {
-	XOJ_CHECK_TYPE_OBJ(&inertia, Inertia);
-
-	XOJ_INIT_TYPE(Inertia);
 	*this = inertia;
 }
 
-Inertia::~Inertia()
-{
-	XOJ_RELEASE_TYPE(Inertia);
-}
+Inertia::~Inertia() = default;
 
-double Inertia::centerX()
+auto Inertia::centerX() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	return this->sx / this->mass;
 }
 
-double Inertia::centerY()
+auto Inertia::centerY() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	return this->sy / this->mass;
 }
 
-double Inertia::xx()
+auto Inertia::xx() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	if (this->mass <= 0.0)
 	{
 		return 0.0;
@@ -54,10 +40,8 @@ double Inertia::xx()
 	return (this->sxx - this->sx * this->sx / this->mass) / this->mass;
 }
 
-double Inertia::xy()
+auto Inertia::xy() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	if (this->mass <= 0.0)
 	{
 		return 0.0;
@@ -65,10 +49,8 @@ double Inertia::xy()
 	return (this->sxy - this->sx * this->sy / this->mass) / this->mass;
 }
 
-double Inertia::yy()
+auto Inertia::yy() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	if (this->mass <= 0.0)
 	{
 		return 0.0;
@@ -76,10 +58,8 @@ double Inertia::yy()
 	return (this->syy - this->sy * this->sy / this->mass) / this->mass;
 }
 
-double Inertia::rad()
+auto Inertia::rad() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	double ixx = this->xx();
 	double iyy = this->yy();
 	if (ixx + iyy <= 0.0)
@@ -89,10 +69,8 @@ double Inertia::rad()
 	return sqrt(ixx + iyy);
 }
 
-double Inertia::det()
+auto Inertia::det() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	double ixx = this->xx();
 	double iyy = this->yy();
 	double ixy = this->xy();
@@ -109,17 +87,13 @@ double Inertia::det()
 	return 4 * (ixx * iyy - ixy * ixy) / (ixx + iyy) / (ixx + iyy);
 }
 
-double Inertia::getMass()
+auto Inertia::getMass() -> double
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	return mass;
 }
 
 void Inertia::increase(Point p1, Point p2, int coef)
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	double dm = coef * hypot(p2.x - p1.x, p2.y - p1.y);
 	this->mass += dm;
 	this->sx += dm * p1.x;
@@ -131,8 +105,6 @@ void Inertia::increase(Point p1, Point p2, int coef)
 
 void Inertia::calc(const Point* pt, int start, int end)
 {
-	XOJ_CHECK_TYPE(Inertia);
-
 	this->mass = this->sx = this->sy = this->sxx = this->sxy = this->syy = 0.;
 	for (int i = start; i < end - 1; i++)
 	{

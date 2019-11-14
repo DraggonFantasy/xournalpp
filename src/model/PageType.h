@@ -35,8 +35,6 @@ public:
 	~PageType();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 public:
 	/**
 	 * Compare Operator

@@ -35,8 +35,6 @@ public:
 	void stop();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	bool stopConsumer = false;
 

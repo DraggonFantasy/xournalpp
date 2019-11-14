@@ -32,6 +32,4 @@ public:
 	virtual void setNoBackgroundExport(bool noBackgroundExport);
 
 private:
-	XOJ_TYPE_ATTRIB;
 };
-

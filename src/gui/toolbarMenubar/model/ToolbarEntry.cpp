@@ -1,21 +1,14 @@
 #include "ToolbarEntry.h"
 
-ToolbarEntry::ToolbarEntry()
-{
-	XOJ_INIT_TYPE(ToolbarEntry);
-}
+ToolbarEntry::ToolbarEntry() = default;
 
 ToolbarEntry::ToolbarEntry(const ToolbarEntry& e)
 {
-	XOJ_INIT_TYPE(ToolbarEntry);
-
 	*this = e;
 }
 
 void ToolbarEntry::operator=(const ToolbarEntry& e)
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
 	this->name = e.name;
 	clearList();
 
@@ -27,11 +20,7 @@ void ToolbarEntry::operator=(const ToolbarEntry& e)
 
 ToolbarEntry::~ToolbarEntry()
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
 	clearList();
-
-	XOJ_RELEASE_TYPE(ToolbarEntry);
 }
 
 void ToolbarEntry::clearList()
@@ -43,40 +32,32 @@ void ToolbarEntry::clearList()
 	entries.clear();
 }
 
-string ToolbarEntry::getName()
+auto ToolbarEntry::getName() -> string
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
 	return this->name;
 }
 
 void ToolbarEntry::setName(string name)
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
 	this->name = name;
 }
 
-int ToolbarEntry::addItem(string item)
+auto ToolbarEntry::addItem(string item) -> int
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
-	ToolbarItem* it = new ToolbarItem(item);
+	auto* it = new ToolbarItem(item);
 	entries.push_back(it);
 
 	return it->getId();
 }
 
-bool ToolbarEntry::removeItemById(int id)
+auto ToolbarEntry::removeItemById(int id) -> bool
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
 	for (unsigned int i = 0; i < this->entries.size(); i++)
 	{
 		if (this->entries[i]->getId() == id)
 		{
 			delete this->entries[i];
-			entries[i] = NULL;
+			entries[i] = nullptr;
 			entries.erase(entries.begin() + i);
 			return true;
 		}
@@ -84,11 +65,9 @@ bool ToolbarEntry::removeItemById(int id)
 	return false;
 }
 
-int ToolbarEntry::insertItem(string item, int position)
+auto ToolbarEntry::insertItem(string item, int position) -> int
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
-	ToolbarItem* it = new ToolbarItem(item);
+	auto* it = new ToolbarItem(item);
 	if (position >= (int)entries.size())
 	{
 		entries.push_back(it);
@@ -99,9 +78,7 @@ int ToolbarEntry::insertItem(string item, int position)
 	return it->getId();
 }
 
-const ToolbarItemVector& ToolbarEntry::getItems() const
+auto ToolbarEntry::getItems() const -> const ToolbarItemVector&
 {
-	XOJ_CHECK_TYPE(ToolbarEntry);
-
 	return entries;
 }

@@ -13,8 +13,6 @@ MoveUndoAction::MoveUndoAction(Layer* sourceLayer, PageRef sourcePage, vector<El
 							   Layer* targetLayer, PageRef targetPage)
  : UndoAction("MoveUndoAction")
 {
-	XOJ_INIT_TYPE(MoveUndoAction);
-
 	this->page = sourcePage;
 	this->sourceLayer = sourceLayer;
 	this->text = _("Move");
@@ -31,12 +29,7 @@ MoveUndoAction::MoveUndoAction(Layer* sourceLayer, PageRef sourcePage, vector<El
 	}
 }
 
-MoveUndoAction::~MoveUndoAction()
-{
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
-	XOJ_RELEASE_TYPE(MoveUndoAction);
-}
+MoveUndoAction::~MoveUndoAction() = default;
 
 void MoveUndoAction::move()
 {
@@ -56,11 +49,9 @@ void MoveUndoAction::move()
 	}
 }
 
-bool MoveUndoAction::undo(Control* control)
+auto MoveUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
-	if (this->sourceLayer != this->targetLayer && this->targetLayer != NULL)
+	if (this->sourceLayer != this->targetLayer && this->targetLayer != nullptr)
 	{
 		switchLayer(&this->elements, this->targetLayer, this->sourceLayer);
 	}
@@ -72,11 +63,9 @@ bool MoveUndoAction::undo(Control* control)
 	return true;
 }
 
-bool MoveUndoAction::redo(Control* control)
+auto MoveUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
-	if (this->sourceLayer != this->targetLayer && this->targetLayer != NULL)
+	if (this->sourceLayer != this->targetLayer && this->targetLayer != nullptr)
 	{
 		switchLayer(&this->elements, this->sourceLayer, this->targetLayer);
 	}
@@ -90,8 +79,6 @@ bool MoveUndoAction::redo(Control* control)
 
 void MoveUndoAction::switchLayer(vector<Element*>* entries, Layer* oldLayer, Layer* newLayer)
 {
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
 	for (Element* e : this->elements)
 	{
 		oldLayer->removeElement(e, false);
@@ -101,8 +88,6 @@ void MoveUndoAction::switchLayer(vector<Element*>* entries, Layer* oldLayer, Lay
 
 void MoveUndoAction::repaint()
 {
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
 	if (this->elements.empty()) return;
 
 	this->page->firePageChanged();
@@ -113,19 +98,15 @@ void MoveUndoAction::repaint()
 	}
 }
 
-vector<PageRef> MoveUndoAction::getPages()
+auto MoveUndoAction::getPages() -> vector<PageRef>
 {
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
 	vector<PageRef> pages;
 	pages.push_back(this->page);
 	pages.push_back(this->targetPage);
 	return pages;
 }
 
-string MoveUndoAction::getText()
+auto MoveUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(MoveUndoAction);
-
 	return text;
 }

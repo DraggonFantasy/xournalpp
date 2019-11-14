@@ -80,8 +80,6 @@ public:
 	XojPage* clone();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	/**
 	 * The reference counter
 	 */
@@ -106,7 +104,7 @@ private:
 	/**
 	 * The current selected layer ID
 	 */
-	size_t currentLayer = size_t_npos;
+	size_t currentLayer = npos;
 
 	/**
 	 * The Background Type of the page
@@ -116,7 +114,7 @@ private:
 	/**
 	 * If the page has a PDF background, the page number of the PDF Page
 	 */
-	size_t pdfBackgroundPage = size_t_npos;
+	size_t pdfBackgroundPage = npos;
 
 	/**
 	 * The background color if the background type is palain

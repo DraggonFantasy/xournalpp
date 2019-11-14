@@ -25,11 +25,11 @@ class LayerController : public DocumentListener
 {
 public:
 	LayerController(Control* control);
-	virtual ~LayerController();
+	~LayerController() override = default;
 
 public:
-	void documentChanged(DocumentChangeType type);
-	void pageSelected(size_t page);
+	void documentChanged(DocumentChangeType type) override;
+	void pageSelected(size_t page) override;
 
 public:
 	void insertLayer(PageRef page, Layer* layer, int layerPos);
@@ -89,8 +89,6 @@ public:
 	void ensureLayerExists(PageRef page);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	Control* control;
 
 	std::list<LayerCtrlListener*> listener;

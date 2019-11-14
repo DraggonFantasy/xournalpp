@@ -24,16 +24,15 @@ public:
 	virtual ~Rectangle();
 
 public:
-
 	/**
 	 * Returns whether this rectangle intersects another
 	 *
 	 * @param other the other rectangle
-	 * @param dest  if this is not NULL, the rectangle will be modified to contain the intersection
+	 * @param dest  if this is not nullptr, the rectangle will be modified to contain the intersection
 	 *
 	 * @return whether the rectangles intersect
 	 */
-	bool intersects(const Rectangle& other, Rectangle* dest = NULL) const;
+	bool intersects(const Rectangle& other, Rectangle* dest = nullptr) const;
 
 	/**
 	 * Computes the union of this rectangle with the one given by the parameters
@@ -59,8 +58,6 @@ public:
 	double area() const;
 
 public:
-	XOJ_TYPE_ATTRIB;
-
 	double x = 0;
 	double y = 0;
 	double width = 0;

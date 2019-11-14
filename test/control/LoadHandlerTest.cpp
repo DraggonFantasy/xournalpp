@@ -10,6 +10,8 @@
  */
 
 #include "control/xojfile/LoadHandler.h"
+#include "control/xojfile/SaveHandler.h"
+#include "util/PathUtil.h"
 #include <config-test.h>
 
 #ifdef TEST_CHECK_SPEED
@@ -18,7 +20,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <stdlib.h>
+#include <iostream>
+#include <cmath>
 
 class LoadHandlerTest : public CppUnit::TestFixture
 {
@@ -42,6 +45,11 @@ class LoadHandlerTest : public CppUnit::TestFixture
 	CPPUNIT_TEST(testTextZipped);
 	CPPUNIT_TEST(testStroke);
 	CPPUNIT_TEST(loadImage);
+	CPPUNIT_TEST(testLoadStoreLoad);
+
+#ifdef __linux__
+	CPPUNIT_TEST(testLoadStoreLoadGerman);
+#endif
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -303,6 +311,132 @@ public:
 
 	}
 
+	void testLoadStoreLoad()
+	{
+		auto getElements = [](Document* doc) {
+			CPPUNIT_ASSERT_EQUAL((size_t) 1, doc->getPageCount());
+			PageRef page = doc->getPage(0);
+
+			CPPUNIT_ASSERT_EQUAL((size_t) 1, (*page).getLayerCount());
+			Layer* layer = (*(*page).getLayers())[0];
+
+			std::vector<Element*>* elements = layer->getElements();
+			CPPUNIT_ASSERT_EQUAL(8, static_cast<int>(layer->getElements()->size()));
+
+			Stroke* e0 = (Stroke*) (*layer->getElements())[0];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e0->getType());
+
+			Stroke* e1 = (Stroke*) (*layer->getElements())[1];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e1->getType());
+
+			Stroke* e2 = (Stroke*) (*layer->getElements())[2];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e2->getType());
+
+			Stroke* e3 = (Stroke*) (*layer->getElements())[3];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e3->getType());
+
+			Stroke* e4 = (Stroke*) (*layer->getElements())[4];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e4->getType());
+
+			Text* e5 = (Text*) (*layer->getElements())[5];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_TEXT, e5->getType());
+
+			Stroke* e6 = (Stroke*) (*layer->getElements())[6];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e6->getType());
+
+			Stroke* e7 = (Stroke*) (*layer->getElements())[7];
+			CPPUNIT_ASSERT_EQUAL(ELEMENT_STROKE, e7->getType());
+
+			return elements;
+		};
+		LoadHandler handler;
+		Document* doc1 = handler.loadDocument(GET_TESTFILE("packaged_xopp/suite.xopp"));
+		auto elements1 = getElements(doc1);
+
+		SaveHandler h;
+		h.prepareSave(doc1);
+		Path tmp = Util::getTmpDirSubfolder() / "save.xopp";
+		h.saveTo(tmp);
+
+		// Create a second loader so the first one doesn't free the memory
+		LoadHandler handler2;
+		Document* doc2 = handler2.loadDocument(tmp.str());
+		auto elements2 = getElements(doc2);
+
+		// Check that the coordinates from both files don't differ more than the precision they were saved with
+		auto coordEq = [](double a, double b) { return std::abs(a - b) <= 1e-8; };
+
+		for (unsigned long i = 0; i < elements1->size(); i++)
+		{
+			Element* a = elements1->at(i);
+			Element* b = elements2->at(i);
+			CPPUNIT_ASSERT_EQUAL(a->getType(), b->getType());
+			CPPUNIT_ASSERT(coordEq(a->getX(), b->getX()));
+			CPPUNIT_ASSERT(coordEq(a->getY(), b->getY()));
+			CPPUNIT_ASSERT(coordEq(a->getElementWidth(), b->getElementWidth()));
+			CPPUNIT_ASSERT(coordEq(a->getElementHeight(), b->getElementHeight()));
+			CPPUNIT_ASSERT_EQUAL(a->getColor(), b->getColor());
+			switch (a->getType())
+			{
+			case ELEMENT_STROKE:
+			{
+				auto sA = dynamic_cast<Stroke*>(a);
+				auto sB = dynamic_cast<Stroke*>(b);
+				CPPUNIT_ASSERT_EQUAL(sA->getPointCount(), sB->getPointCount());
+				CPPUNIT_ASSERT_EQUAL(sA->getToolType(), sB->getToolType());
+				CPPUNIT_ASSERT_EQUAL(sA->getLineStyle().hasDashes(), sB->getLineStyle().hasDashes());
+				CPPUNIT_ASSERT(coordEq(sA->getAvgPressure(), sB->getAvgPressure()));
+				for (int j = 0; j < sA->getPointCount(); j++)
+				{
+					Point pA = sA->getPoint(j);
+					Point pB = sB->getPoint(j);
+					CPPUNIT_ASSERT(coordEq(pA.x, pB.x));
+					CPPUNIT_ASSERT(coordEq(pA.y, pB.y));
+					CPPUNIT_ASSERT(coordEq(pA.z, pB.z));
+				}
+				break;
+			}
+			case ELEMENT_TEXT:
+			{
+				auto tA = dynamic_cast<Text*>(a);
+				auto tB = dynamic_cast<Text*>(b);
+				CPPUNIT_ASSERT_EQUAL(tA->getText(), tB->getText());
+				CPPUNIT_ASSERT_EQUAL(tA->getFont().getSize(), tB->getFont().getSize());
+				break;
+			}
+			default:
+				// If other elements are to be used in the test, implement extra comparisons
+				CPPUNIT_ASSERT(false);
+				break;
+			}
+		}
+	}
+
+#ifdef __linux__
+	void testLoadStoreLoadGerman()
+	{
+		constexpr auto testLocale = "de_DE.UTF-8";
+		char* currentLocale = setlocale(LC_ALL, testLocale);
+		if (currentLocale == nullptr)
+		{
+			auto environ = g_get_environ();
+			bool isCI = g_environ_getenv(environ, "CI");
+			g_strfreev(environ);
+			if (isCI)
+			{
+				CPPUNIT_ASSERT(false);
+			}
+			else
+			{
+				std::cout << "Skipping testLoadStoreLoadGerman! Consider generating the 'de_DE.UTF-8' locale on your "
+				             "system."
+				          << std::endl;
+			}
+		}
+		testLoadStoreLoad();
+		setlocale(LC_ALL, "C");
+	}
+#endif
 };
 
 // Registers the fixture into the 'registry'

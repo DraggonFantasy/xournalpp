@@ -32,8 +32,6 @@ public:
 	vector<DeviceInfo> getInputDevices();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	Settings* settings = nullptr;
 

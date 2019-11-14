@@ -4,28 +4,19 @@
 
 #include <i18n.h>
 
-ObjectInputStream::ObjectInputStream()
-{
-	XOJ_INIT_TYPE(ObjectInputStream);
-}
+ObjectInputStream::ObjectInputStream() = default;
 
 ObjectInputStream::~ObjectInputStream()
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	if (this->str)
 	{
 		g_string_free(this->str, true);
-		this->str = NULL;
+		this->str = nullptr;
 	}
-
-	XOJ_RELEASE_TYPE(ObjectInputStream);
 }
 
-bool ObjectInputStream::read(const char* data, int len)
+auto ObjectInputStream::read(const char* data, int len) -> bool
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	if (this->str)
 	{
 		g_string_free(this->str, true);
@@ -59,8 +50,6 @@ bool ObjectInputStream::read(const char* data, int len)
 
 void ObjectInputStream::readObject(const char* name)
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	string type = readObject();
 	if (type != name)
 	{
@@ -69,18 +58,14 @@ void ObjectInputStream::readObject(const char* name)
 	}
 }
 
-string ObjectInputStream::readObject()
+auto ObjectInputStream::readObject() -> string
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('{');
 	return readString();
 }
 
-string ObjectInputStream::getNextObjectName()
+auto ObjectInputStream::getNextObjectName() -> string
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	int pos = this->pos;
 	checkType('{');
 	string name = readString();
@@ -92,15 +77,11 @@ string ObjectInputStream::getNextObjectName()
 
 void ObjectInputStream::endObject()
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('}');
 }
 
-int ObjectInputStream::readInt()
+auto ObjectInputStream::readInt() -> int
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('i');
 
 	if (this->pos + sizeof(int) >= this->str->len)
@@ -113,10 +94,8 @@ int ObjectInputStream::readInt()
 	return i;
 }
 
-double ObjectInputStream::readDouble()
+auto ObjectInputStream::readDouble() -> double
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('d');
 
 	if (this->pos + sizeof(double) >= this->str->len)
@@ -129,10 +108,8 @@ double ObjectInputStream::readDouble()
 	return d;
 }
 
-size_t ObjectInputStream::readSizeT()
+auto ObjectInputStream::readSizeT() -> size_t
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('l');
 
 	if (this->pos + sizeof(size_t) >= this->str->len)
@@ -145,10 +122,8 @@ size_t ObjectInputStream::readSizeT()
 	return st;
 }
 
-string ObjectInputStream::readString()
+auto ObjectInputStream::readString() -> string
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('s');
 
 	if (this->pos + sizeof(int) >= this->str->len)
@@ -171,8 +146,6 @@ string ObjectInputStream::readString()
 
 void ObjectInputStream::readData(void** data, int* length)
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('b');
 
 	if (this->pos + 2 * sizeof(int) >= this->str->len)
@@ -194,7 +167,7 @@ void ObjectInputStream::readData(void** data, int* length)
 	if (len == 0)
 	{
 		*length = 0;
-		*data = NULL;
+		*data = nullptr;
 	}
 	else
 	{
@@ -224,7 +197,7 @@ public:
 	int pos;
 };
 
-cairo_status_t cairoReadFunction(PngDatasource* obj, unsigned char* data, unsigned int length)
+auto cairoReadFunction(PngDatasource* obj, unsigned char* data, unsigned int length) -> cairo_status_t
 {
 	for (unsigned int i = 0; i < length; i++, obj->pos++)
 	{
@@ -238,10 +211,8 @@ cairo_status_t cairoReadFunction(PngDatasource* obj, unsigned char* data, unsign
 	return CAIRO_STATUS_SUCCESS;
 }
 
-cairo_surface_t* ObjectInputStream::readImage()
+auto ObjectInputStream::readImage() -> cairo_surface_t*
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	checkType('m');
 
 	if (this->pos + sizeof(int) >= this->str->len)
@@ -270,8 +241,6 @@ cairo_surface_t* ObjectInputStream::readImage()
 
 void ObjectInputStream::checkType(char type)
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	if (this->pos + 2 > this->str->len)
 	{
 		throw InputStreamException(FS(FORMAT_STR("End reached, but try to read {1}, index {2} of {3}")
@@ -293,10 +262,8 @@ void ObjectInputStream::checkType(char type)
 	this->pos++;
 }
 
-string ObjectInputStream::getType(char type)
+auto ObjectInputStream::getType(char type) -> string
 {
-	XOJ_CHECK_TYPE(ObjectInputStream);
-
 	string ret;
 	if (type == '{')
 	{

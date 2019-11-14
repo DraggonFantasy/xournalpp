@@ -41,8 +41,6 @@ public:
 	void stopRecording();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	const unsigned long framesPerBuffer = 64;
 

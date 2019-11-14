@@ -14,36 +14,26 @@ InsertLayerUndoAction::InsertLayerUndoAction(LayerController* layerController, P
    layerPosition(layerPosition),
    layerController(layerController)
 {
-	XOJ_INIT_TYPE(InsertLayerUndoAction);
-
 	this->page = page;
 	this->layer = layer;
 }
 
 InsertLayerUndoAction::~InsertLayerUndoAction()
 {
-	XOJ_CHECK_TYPE(InsertLayerUndoAction);
-
 	if (this->undone)
 	{
 		// The layer was undone, also deleted
 		delete this->layer;
 	}
-
-	XOJ_RELEASE_TYPE(InsertLayerUndoAction);
 }
 
-string InsertLayerUndoAction::getText()
+auto InsertLayerUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(InsertLayerUndoAction);
-
 	return _("Insert layer");
 }
 
-bool InsertLayerUndoAction::undo(Control* control)
+auto InsertLayerUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(InsertLayerUndoAction);
-
 	// perform the same thing we did to InsertDeletePage
 	// to prevent a double lock (we're already locked here)
 	// doc->lock();
@@ -55,10 +45,8 @@ bool InsertLayerUndoAction::undo(Control* control)
 	return true;
 }
 
-bool InsertLayerUndoAction::redo(Control* control)
+auto InsertLayerUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(InsertLayerUndoAction);
-
 	layerController->insertLayer(this->page, this->layer, layerPosition);
 	Document* doc = control->getDocument();
 	int id = doc->indexOf(this->page);

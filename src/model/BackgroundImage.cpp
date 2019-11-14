@@ -31,8 +31,8 @@ struct BackgroundImage::Content
 
 	Content(const Content&) = delete;
 	Content(Content&&) = default;
-	Content& operator=(const Content&) = delete;
-	Content& operator=(Content&&) = default;
+	auto operator=(const Content&) -> Content& = delete;
+	auto operator=(Content &&) -> Content& = default;
 
 	string filename;
 	GdkPixbuf* pixbuf = nullptr;
@@ -40,62 +40,43 @@ struct BackgroundImage::Content
 	bool attach = false;
 };
 
-BackgroundImage::BackgroundImage()
-{
-	XOJ_INIT_TYPE(BackgroundImage);
-}
+BackgroundImage::BackgroundImage() = default;
 
-BackgroundImage::BackgroundImage(const BackgroundImage& img) : img(img.img)
-{
-	XOJ_INIT_TYPE(BackgroundImage);
-	XOJ_CHECK_TYPE_OBJ((&img), BackgroundImage);
-}
+BackgroundImage::BackgroundImage(const BackgroundImage& img) = default;
 
 BackgroundImage::BackgroundImage(BackgroundImage&& img) noexcept : img(std::move(img.img))
 {
-	XOJ_INIT_TYPE(BackgroundImage);
-	XOJ_CHECK_TYPE_OBJ((&img), BackgroundImage);
 }
 
-BackgroundImage::~BackgroundImage()
-{
-	XOJ_CHECK_TYPE(BackgroundImage);
-	XOJ_RELEASE_TYPE(BackgroundImage);
-}
+BackgroundImage::~BackgroundImage() = default;
 
-bool BackgroundImage::operator==(const BackgroundImage& img)
+auto BackgroundImage::operator==(const BackgroundImage& img) -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	return this->img == img.img;
 }
 
 void BackgroundImage::free()
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	this->img.reset();
 }
 
 void BackgroundImage::loadFile(string filename, GError** error)
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	this->img = std::make_shared<Content>(std::move(filename), error);
 }
 
 void BackgroundImage::loadFile(GInputStream* stream, string filename, GError** error)
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	this->img = std::make_shared<Content>(stream, std::move(filename), error);
 }
 
-int BackgroundImage::getCloneId()
+auto BackgroundImage::getCloneId() -> int
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	return this->img ? this->img->pageId : -1;
 }
 
 void BackgroundImage::setCloneId(int id)
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	if (this->img)
 	{
 		this->img->pageId = id;
@@ -107,30 +88,26 @@ void BackgroundImage::clearSaveState()
 	this->setCloneId(-1);
 }
 
-string BackgroundImage::getFilename()
+auto BackgroundImage::getFilename() -> string
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	return this->img ? this->img->filename : "";
 }
 
 void BackgroundImage::setFilename(string filename)
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	if (this->img)
 	{
 		this->img->filename = std::move(filename);
 	}
 }
 
-bool BackgroundImage::isAttached()
+auto BackgroundImage::isAttached() -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	return this->img ? this->img->attach : false;
 }
 
 void BackgroundImage::setAttach(bool attach)
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	if (!this->img)
 	{
 		g_warning("BackgroundImage::setAttach: please load first an image before call setAttach!");
@@ -140,14 +117,12 @@ void BackgroundImage::setAttach(bool attach)
 	this->img->attach = attach;
 }
 
-GdkPixbuf* BackgroundImage::getPixbuf()
+auto BackgroundImage::getPixbuf() -> GdkPixbuf*
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	return this->img ? this->img->pixbuf : nullptr;
 }
 
-bool BackgroundImage::isEmpty()
+auto BackgroundImage::isEmpty() -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundImage);
 	return !this->img;
 }

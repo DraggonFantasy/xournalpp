@@ -1,39 +1,29 @@
 #include "DoubleArrayAttribute.h"
+#include "Util.h"
 
-DoubleArrayAttribute::DoubleArrayAttribute(const char* name, double* values, int count) : XMLAttribute(name)
+#include <algorithm>
+
+DoubleArrayAttribute::DoubleArrayAttribute(const char* name, std::vector<double>&& values)
+ : XMLAttribute(name)
+ , values(std::move(values))
 {
-	XOJ_INIT_TYPE(DoubleArrayAttribute);
-
-	this->values = values;
-	this->count = count;
 }
 
-DoubleArrayAttribute::~DoubleArrayAttribute()
-{
-	XOJ_CHECK_TYPE(DoubleArrayAttribute);
-
-	delete values;
-	values = NULL;
-
-	XOJ_RELEASE_TYPE(DoubleArrayAttribute);
-}
+DoubleArrayAttribute::~DoubleArrayAttribute() = default;
 
 void DoubleArrayAttribute::writeOut(OutputStream* out)
 {
-	XOJ_CHECK_TYPE(DoubleArrayAttribute);
-
-	if (this->count > 0)
+	if (!this->values.empty())
 	{
 		char str[G_ASCII_DTOSTR_BUF_SIZE];
-		g_ascii_dtostr( str, G_ASCII_DTOSTR_BUF_SIZE, this->values[0]);	//  g_ascii_ version uses C locale always.
+		// g_ascii_ version uses C locale always.
+		g_ascii_formatd(str, G_ASCII_DTOSTR_BUF_SIZE, Util::PRECISION_FORMAT_STRING, this->values[0]);
 		out->write(str);
-	}
 
-	for (int i = 1; i < this->count; i++)
-	{
-		char str[G_ASCII_DTOSTR_BUF_SIZE];
-		g_ascii_dtostr( str, G_ASCII_DTOSTR_BUF_SIZE, this->values[i]);
-		out->write(" ");
-		out->write(str);
+		std::for_each(std::begin(this->values) + 1, std::end(this->values), [&](auto& x) {
+			g_ascii_formatd(str, G_ASCII_DTOSTR_BUF_SIZE, Util::PRECISION_FORMAT_STRING, x);
+			out->write(" ");
+			out->write(str);
+		});
 	}
 }

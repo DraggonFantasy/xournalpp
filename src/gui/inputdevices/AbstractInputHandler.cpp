@@ -8,37 +8,24 @@
 
 AbstractInputHandler::AbstractInputHandler(InputContext* inputContext)
 {
-	XOJ_INIT_TYPE(AbstractInputHandler);
-
 	this->inputContext = inputContext;
 }
 
-AbstractInputHandler::~AbstractInputHandler()
-{
-	XOJ_CHECK_TYPE(AbstractInputHandler);
-
-	XOJ_RELEASE_TYPE(AbstractInputHandler);
-}
+AbstractInputHandler::~AbstractInputHandler() = default;
 
 void AbstractInputHandler::block(bool block)
 {
-	XOJ_CHECK_TYPE(AbstractInputHandler);
-
 	this->blocked = block;
 	this->onBlock();
 }
 
-bool AbstractInputHandler::isBlocked()
+auto AbstractInputHandler::isBlocked() -> bool
 {
-	XOJ_CHECK_TYPE(AbstractInputHandler);
-
 	return this->blocked;
 }
 
-bool AbstractInputHandler::handle(InputEvent* event)
+auto AbstractInputHandler::handle(InputEvent* event) -> bool
 {
-	XOJ_CHECK_TYPE(AbstractInputHandler);
-
 	if (!this->blocked)
 	{
 		this->inputContext->getXournal()->view->getCursor()->setInputDeviceClass(event->deviceClass);
@@ -51,12 +38,10 @@ bool AbstractInputHandler::handle(InputEvent* event)
 /**
  * Get Page at current position
  *
- * @return page or NULL if none
+ * @return page or nullptr if none
  */
-XojPageView* AbstractInputHandler::getPageAtCurrentPosition(InputEvent* event)
+auto AbstractInputHandler::getPageAtCurrentPosition(InputEvent* event) -> XojPageView*
 {
-	XOJ_CHECK_TYPE(AbstractInputHandler);
-
 	if (event == nullptr)
 	{
 		return nullptr;
@@ -79,10 +64,8 @@ XojPageView* AbstractInputHandler::getPageAtCurrentPosition(InputEvent* event)
 /**
  * Get input data relative to current input page
  */
-PositionInputData AbstractInputHandler::getInputDataRelativeToCurrentPage(XojPageView* page, InputEvent* event)
+auto AbstractInputHandler::getInputDataRelativeToCurrentPage(XojPageView* page, InputEvent* event) -> PositionInputData
 {
-	XOJ_CHECK_TYPE(AbstractInputHandler);
-
 	GtkXournal* xournal = inputContext->getXournal();
 
 	gdouble eventX = event->relativeX;
@@ -109,5 +92,4 @@ PositionInputData AbstractInputHandler::getInputDataRelativeToCurrentPage(XojPag
 
 void AbstractInputHandler::onBlock()
 {
-	XOJ_CHECK_TYPE(AbstractInputHandler);
 }

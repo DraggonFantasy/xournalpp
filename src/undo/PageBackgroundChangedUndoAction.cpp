@@ -10,8 +10,6 @@ PageBackgroundChangedUndoAction::PageBackgroundChangedUndoAction(PageRef page, P
 																 double origW, double origH)
  : UndoAction("PageBackgroundChangedUndoAction")
 {
-	XOJ_INIT_TYPE(PageBackgroundChangedUndoAction);
-
 	this->page = page;
 	this->origType = origType;
 	this->origPdfPage = origPdfPage;
@@ -21,15 +19,10 @@ PageBackgroundChangedUndoAction::PageBackgroundChangedUndoAction(PageRef page, P
 	this->newType.format = PageTypeFormat::Plain;
 }
 
-PageBackgroundChangedUndoAction::~PageBackgroundChangedUndoAction()
-{
-	XOJ_RELEASE_TYPE(PageBackgroundChangedUndoAction);
-}
+PageBackgroundChangedUndoAction::~PageBackgroundChangedUndoAction() = default;
 
-bool PageBackgroundChangedUndoAction::undo(Control* control)
+auto PageBackgroundChangedUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangedUndoAction);
-
 	this->newType = this->page->getBackgroundType();
 	this->newPdfPage = this->page->getPdfPageNr();
 	this->newBackgroundImage = this->page->getBackgroundImage();
@@ -64,10 +57,8 @@ bool PageBackgroundChangedUndoAction::undo(Control* control)
 	return true;
 }
 
-bool PageBackgroundChangedUndoAction::redo(Control* control)
+auto PageBackgroundChangedUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangedUndoAction);
-
 	Document* doc = control->getDocument();
 
 	int pageNr = doc->indexOf(this->page);
@@ -99,9 +90,7 @@ bool PageBackgroundChangedUndoAction::redo(Control* control)
 
 }
 
-string PageBackgroundChangedUndoAction::getText()
+auto PageBackgroundChangedUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangedUndoAction);
-
 	return _("Page background changed");
 }

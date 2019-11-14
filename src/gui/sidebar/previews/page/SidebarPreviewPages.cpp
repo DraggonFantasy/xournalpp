@@ -14,8 +14,6 @@ SidebarPreviewPages::SidebarPreviewPages(Control* control, GladeGui* gui, Sideba
  : SidebarPreviewBase(control, gui, toolbar)
  , contextMenu(gui->get("sidebarPreviewContextMenu"))
 {
-	XOJ_INIT_TYPE(SidebarPreviewPages);
-
 	// Connect the context menu actions
 	const std::map<std::string, SidebarActions> ctxMenuActions = {
 	        {"sidebarPreviewDuplicate", SIDEBAR_ACTION_COPY},
@@ -33,7 +31,7 @@ SidebarPreviewPages::SidebarPreviewPages(Control* control, GladeGui* gui, Sideba
 
 		// Unfortunately, we need a fairly complicated mechanism to keep track
 		// of which action we want to execute.
-		typedef SidebarPreviewPages::ContextMenuData Data;
+		using Data = SidebarPreviewPages::ContextMenuData;
 		auto userdata = mem::make_unique<Data>(Data{this->toolbar, pair.second});
 
 		const auto callback =
@@ -46,8 +44,6 @@ SidebarPreviewPages::SidebarPreviewPages(Control* control, GladeGui* gui, Sideba
 
 SidebarPreviewPages::~SidebarPreviewPages()
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	for (const auto& signalTuple: this->contextMenuSignals)
 	{
 		GtkWidget* const widget = std::get<0>(signalTuple);
@@ -58,21 +54,15 @@ SidebarPreviewPages::~SidebarPreviewPages()
 		}
 		g_object_unref(widget);
 	}
-
-	XOJ_RELEASE_TYPE(SidebarPreviewPages);
 }
 
-string SidebarPreviewPages::getName()
+auto SidebarPreviewPages::getName() -> string
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	return _("Page Preview");
 }
 
-string SidebarPreviewPages::getIconName()
+auto SidebarPreviewPages::getIconName() -> string
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	return "sidebar-page-preview";
 }
 
@@ -81,8 +71,6 @@ string SidebarPreviewPages::getIconName()
  */
 void SidebarPreviewPages::actionPerformed(SidebarActions action)
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	switch (action)
 	{
 	case SIDEBAR_ACTION_MOVE_UP:
@@ -97,7 +85,7 @@ void SidebarPreviewPages::actionPerformed(SidebarActions action)
 		doc->lock();
 		size_t page = doc->indexOf(swappedPage);
 		PageRef otherPage = doc->getPage(page - 1);
-		if (page != size_t_npos)
+		if (page != npos)
 		{
 			doc->deletePage(page);
 			doc->insertPage(swappedPage, page - 1);
@@ -126,7 +114,7 @@ void SidebarPreviewPages::actionPerformed(SidebarActions action)
 		doc->lock();
 		size_t page = doc->indexOf(swappedPage);
 		PageRef otherPage = doc->getPage(page + 1);
-		if (page != size_t_npos)
+		if (page != npos)
 		{
 			doc->deletePage(page);
 			doc->insertPage(swappedPage, page + 1);
@@ -187,8 +175,6 @@ void SidebarPreviewPages::actionPerformed(SidebarActions action)
 
 void SidebarPreviewPages::updatePreviews()
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	Document* doc = this->getControl()->getDocument();
 	doc->lock();
 	size_t len = doc->getPageCount();
@@ -218,9 +204,7 @@ void SidebarPreviewPages::updatePreviews()
 
 void SidebarPreviewPages::pageSizeChanged(size_t page)
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
-	if (page == size_t_npos || page >= this->previews.size())
+	if (page == npos || page >= this->previews.size())
 	{
 		return;
 	}
@@ -233,9 +217,7 @@ void SidebarPreviewPages::pageSizeChanged(size_t page)
 
 void SidebarPreviewPages::pageChanged(size_t page)
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
-	if (page == size_t_npos || page >= this->previews.size())
+	if (page == npos || page >= this->previews.size())
 	{
 		return;
 	}
@@ -246,8 +228,6 @@ void SidebarPreviewPages::pageChanged(size_t page)
 
 void SidebarPreviewPages::pageDeleted(size_t page)
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	if (page >= previews.size())
 	{
 		return;
@@ -264,8 +244,6 @@ void SidebarPreviewPages::pageDeleted(size_t page)
 
 void SidebarPreviewPages::pageInserted(size_t page)
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	Document* doc = control->getDocument();
 	doc->lock();
 
@@ -288,8 +266,6 @@ void SidebarPreviewPages::pageInserted(size_t page)
  */
 void SidebarPreviewPages::unselectPage()
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	for (SidebarPreviewBaseEntry* p : this->previews)
 	{
 		p->setSelected(false);
@@ -298,15 +274,13 @@ void SidebarPreviewPages::unselectPage()
 
 void SidebarPreviewPages::pageSelected(size_t page)
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
-	if (this->selectedEntry != size_t_npos && this->selectedEntry < this->previews.size())
+	if (this->selectedEntry != npos && this->selectedEntry < this->previews.size())
 	{
 		this->previews[this->selectedEntry]->setSelected(false);
 	}
 	this->selectedEntry = page;
 
-	if (this->selectedEntry != size_t_npos && this->selectedEntry < this->previews.size())
+	if (this->selectedEntry != npos && this->selectedEntry < this->previews.size())
 	{
 		SidebarPreviewBaseEntry* p = this->previews[this->selectedEntry];
 		p->setSelected(true);
@@ -340,7 +314,5 @@ void SidebarPreviewPages::pageSelected(size_t page)
 
 void SidebarPreviewPages::openPreviewContextMenu()
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPages);
-
 	gtk_menu_popup(GTK_MENU(this->contextMenu), nullptr, nullptr, nullptr, nullptr, 3, gtk_get_current_event_time());
 }

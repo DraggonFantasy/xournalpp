@@ -7,8 +7,6 @@ SidebarPreviewPageEntry::SidebarPreviewPageEntry(SidebarPreviewPages* sidebar, P
  : SidebarPreviewBaseEntry(sidebar, page)
  , sidebar(sidebar)
 {
-	XOJ_INIT_TYPE(SidebarPreviewPageEntry);
-
 	const auto clickCallback = G_CALLBACK(+[](GtkWidget* widget, GdkEvent* event, SidebarPreviewPageEntry* self) {
 		// Open context menu on right mouse click
 		if (event->type == GDK_BUTTON_PRESS)
@@ -26,23 +24,15 @@ SidebarPreviewPageEntry::SidebarPreviewPageEntry(SidebarPreviewPages* sidebar, P
 	g_signal_connect_after(this->widget, "button-press-event", clickCallback, this);
 }
 
-SidebarPreviewPageEntry::~SidebarPreviewPageEntry()
-{
-	XOJ_CHECK_TYPE(SidebarPreviewPageEntry);
-	XOJ_RELEASE_TYPE(SidebarPreviewPageEntry);
-}
+SidebarPreviewPageEntry::~SidebarPreviewPageEntry() = default;
 
-PreviewRenderType SidebarPreviewPageEntry::getRenderType()
+auto SidebarPreviewPageEntry::getRenderType() -> PreviewRenderType
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPageEntry);
-
 	return RENDER_TYPE_PAGE_PREVIEW;
 }
 
 void SidebarPreviewPageEntry::mouseButtonPressCallback()
 {
-	XOJ_CHECK_TYPE(SidebarPreviewPageEntry);
-
 	sidebar->getControl()->getScrollHandler()->scrollToPage(page);
 	sidebar->getControl()->firePageSelected(page);
 }

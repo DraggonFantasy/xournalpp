@@ -59,8 +59,6 @@ public:
 	void runAction(SidebarActions actions);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 private:
 	static void btUpClicked(GtkToolButton* toolbutton, SidebarToolbar* toolbar);
 	static void btDownClicked(GtkToolButton* toolbutton, SidebarToolbar* toolbar);

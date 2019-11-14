@@ -23,8 +23,9 @@ class DocumentListener;
 class DocumentHandler
 {
 public:
-	DocumentHandler();
-	virtual ~DocumentHandler();
+	DocumentHandler() = default;
+
+	~DocumentHandler() = default;
 
 public:
 	void fireDocumentChanged(DocumentChangeType type);
@@ -32,7 +33,7 @@ public:
 	void firePageChanged(size_t page);
 	void firePageInserted(size_t page);
 	void firePageDeleted(size_t page);
-	void firePageLoaded(PageRef page);
+	//void firePageLoaded(PageRef page);
 	void firePageSelected(size_t page);
 
 private:
@@ -40,8 +41,6 @@ private:
 	void removeListener(DocumentListener* l);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	std::list<DocumentListener*> listener;
 
 	friend class DocumentListener;

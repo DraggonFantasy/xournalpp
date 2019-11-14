@@ -1,41 +1,32 @@
 #include "PageRange.h"
 
-#include <ctype.h>
-#include <stdlib.h>
+#include <cctype>
+#include <cstdlib>
 
 PageRangeEntry::PageRangeEntry(int first, int last)
 {
-	XOJ_INIT_TYPE(PageRangeEntry);
-
 	this->first = first;
 	this->last = last;
 }
 
-PageRangeEntry::~PageRangeEntry()
-{
-	XOJ_RELEASE_TYPE(PageRangeEntry);
-}
+PageRangeEntry::~PageRangeEntry() = default;
 
-int PageRangeEntry::getLast()
+auto PageRangeEntry::getLast() -> int
 {
-	XOJ_CHECK_TYPE(PageRangeEntry);
-
 	return this->last;
 }
 
-int PageRangeEntry::getFirst()
+auto PageRangeEntry::getFirst() -> int
 {
-	XOJ_CHECK_TYPE(PageRangeEntry);
-
 	return this->first;
 }
 
-bool PageRange::isSeparator(char c)
+auto PageRange::isSeparator(char c) -> bool
 {
 	return (c == ',' || c == ';' || c == ':');
 }
 
-PageRangeVector PageRange::parse(const char* str)
+auto PageRange::parse(const char* str) -> PageRangeVector
 {
 	PageRangeVector data;
 
@@ -45,7 +36,7 @@ PageRangeVector PageRange::parse(const char* str)
 	}
 
 	int start, end;
-	char* next = NULL;
+	char* next = nullptr;
 	const char* p = str;
 	while (*p)
 	{

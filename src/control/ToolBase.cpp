@@ -1,23 +1,14 @@
 #include "ToolBase.h"
 
-ToolBase::ToolBase()
-{
-	XOJ_INIT_TYPE(ToolBase);
-}
+ToolBase::ToolBase() = default;
 
-ToolBase::~ToolBase()
-{
-	XOJ_CHECK_TYPE(ToolBase);
-	XOJ_RELEASE_TYPE(ToolBase);
-}
+ToolBase::~ToolBase() = default;
 
 /**
  * Apply data from another ToolBase or any extending class
  */
 void ToolBase::applyFrom(const ToolBase* t)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->color = t->color;
 	this->size = t->size;
 	this->drawingType = t->drawingType;
@@ -29,10 +20,8 @@ void ToolBase::applyFrom(const ToolBase* t)
 /**
  * @return Color of the tool for all drawing tools
  */
-int ToolBase::getColor() const
+auto ToolBase::getColor() const -> int
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	return this->color;
 }
 
@@ -41,18 +30,14 @@ int ToolBase::getColor() const
  */
 void ToolBase::setColor(int color)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->color = color;
 }
 
 /**
  * @return Size of a drawing tool
  */
-ToolSize ToolBase::getSize() const
+auto ToolBase::getSize() const -> ToolSize
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	return this->size;
 }
 
@@ -61,18 +46,14 @@ ToolSize ToolBase::getSize() const
  */
 void ToolBase::setSize(ToolSize size)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->size = size;
 }
 
 /**
  * @return Draw special shape
  */
-DrawingType ToolBase::getDrawingType() const
+auto ToolBase::getDrawingType() const -> DrawingType
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	return this->drawingType;
 }
 
@@ -81,18 +62,14 @@ DrawingType ToolBase::getDrawingType() const
  */
 void ToolBase::setDrawingType(DrawingType drawingType)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->drawingType = drawingType;
 }
 
 /**
  * @return Fill of the shape is enabled
  */
-bool ToolBase::getFill() const
+auto ToolBase::getFill() const -> bool
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	return this->fill;
 }
 
@@ -101,18 +78,14 @@ bool ToolBase::getFill() const
  */
 void ToolBase::setFill(bool fill)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->fill = fill;
 }
 
 /**
  * @return Alpha for fill
  */
-int ToolBase::getFillAlpha() const
+auto ToolBase::getFillAlpha() const -> int
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	return this->fillAlpha;
 }
 
@@ -121,18 +94,14 @@ int ToolBase::getFillAlpha() const
  */
 void ToolBase::setFillAlpha(int fillAlpha)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->fillAlpha = fillAlpha;
 }
 
 /**
  * @return Style of the line drawing
  */
-const LineStyle& ToolBase::getLineStyle() const
+auto ToolBase::getLineStyle() const -> const LineStyle&
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	return this->lineStyle;
 }
 
@@ -141,8 +110,6 @@ const LineStyle& ToolBase::getLineStyle() const
  */
 void ToolBase::setLineStyle(const LineStyle& style)
 {
-	XOJ_CHECK_TYPE(ToolBase);
-
 	this->lineStyle = style;
 }
 

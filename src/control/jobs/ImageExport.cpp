@@ -2,46 +2,40 @@
 
 #include "control/jobs/ProgressListener.h"
 #include "model/Document.h"
+#include "Util.h"
 #include "view/PdfView.h"
 
 #include <cairo-svg.h>
 #include <i18n.h>
 
+#include <utility>
 
-ImageExport::ImageExport(Document* doc, Path filename, ExportGraphicsFormat format, bool hideBackground, PageRangeVector& exportRange)
- : doc(doc),
-   filename(filename),
-   format(format),
-   hideBackground(hideBackground),
-   exportRange(exportRange)
+
+ImageExport::ImageExport(
+        Document* doc, Path filename, ExportGraphicsFormat format, bool hideBackground, PageRangeVector& exportRange)
+ : doc(doc)
+ , filename(std::move(filename))
+ , format(format)
+ , hideBackground(hideBackground)
+ , exportRange(exportRange)
 {
-	XOJ_INIT_TYPE(ImageExport);
 }
 
-ImageExport::~ImageExport()
-{
-	XOJ_CHECK_TYPE(ImageExport);
-
-	XOJ_RELEASE_TYPE(ImageExport);
-}
+ImageExport::~ImageExport() = default;
 
 /**
  * PNG dpi
  */
 void ImageExport::setPngDpi(int dpi)
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	this->pngDpi = dpi;
 }
 
 /**
  * @return the last error message to show to the user
  */
-string ImageExport::getLastErrorMsg()
+auto ImageExport::getLastErrorMsg() -> string
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	return lastError;
 }
 
@@ -50,15 +44,13 @@ string ImageExport::getLastErrorMsg()
  */
 void ImageExport::createSurface(double width, double height, int id)
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	if (format == EXPORT_GRAPHICS_PNG)
 	{
 		this->surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-												   width * this->pngDpi / 72.0,
-												   height * this->pngDpi / 72.0);
+		                                           width * this->pngDpi / Util::DPI_NORMALIZATION_FACTOR,
+		                                           height * this->pngDpi / Util::DPI_NORMALIZATION_FACTOR);
 		this->cr = cairo_create(this->surface);
-		double factor = this->pngDpi / 72.0;
+		double factor = this->pngDpi / Util::DPI_NORMALIZATION_FACTOR;
 		cairo_scale(this->cr, factor, factor);
 	}
 	else if (format == EXPORT_GRAPHICS_SVG)
@@ -77,10 +69,8 @@ void ImageExport::createSurface(double width, double height, int id)
 /**
  * Free / store the surface
  */
-bool ImageExport::freeSurface(int id)
+auto ImageExport::freeSurface(int id) -> bool
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	cairo_destroy(this->cr);
 
 	cairo_status_t status = CAIRO_STATUS_SUCCESS;
@@ -103,10 +93,8 @@ bool ImageExport::freeSurface(int id)
 /**
  * Get a filename with a number, e.g. .../export-1.png, if the no is -1, return .../export.png
  */
-string ImageExport::getFilenameWithNumber(int no)
+auto ImageExport::getFilenameWithNumber(int no) -> string
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	if (no == -1)
 	{
 		// No number to add
@@ -129,8 +117,6 @@ string ImageExport::getFilenameWithNumber(int no)
  */
 void ImageExport::exportImagePage(int pageId, int id, double zoom, ExportGraphicsFormat format, DocumentView& view)
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	doc->lock();
 	PageRef page = doc->getPage(pageId);
 	doc->unlock();
@@ -149,7 +135,7 @@ void ImageExport::exportImagePage(int pageId, int id, double zoom, ExportGraphic
 		int pgNo = page->getPdfPageNr();
 		XojPdfPageSPtr popplerPage = doc->getPdfPage(pgNo);
 
-		PdfView::drawPage(NULL, popplerPage, cr, zoom, page->getWidth(), page->getHeight());
+		PdfView::drawPage(nullptr, popplerPage, cr, zoom, page->getWidth(), page->getHeight());
 	}
 
 	view.drawPage(page, this->cr, true, hideBackground);
@@ -167,8 +153,6 @@ void ImageExport::exportImagePage(int pageId, int id, double zoom, ExportGraphic
  */
 void ImageExport::exportGraphics(ProgressListener* stateListener)
 {
-	XOJ_CHECK_TYPE(ImageExport);
-
 	// don't lock the page here for the whole flow, else we get a dead lock...
 	// the ui is blocked, so there should be no changes...
 	int count = doc->getPageCount();
@@ -193,7 +177,7 @@ void ImageExport::exportGraphics(ProgressListener* stateListener)
 	stateListener->setMaximumState(selectedCount);
 
 	DocumentView view;
-	double zoom = this->pngDpi / 72.0;
+	double zoom = this->pngDpi / Util::DPI_NORMALIZATION_FACTOR;
 	int current = 0;
 
 	for (int i = 0; i < count; i++)

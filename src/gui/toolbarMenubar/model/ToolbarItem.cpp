@@ -4,8 +4,6 @@ int ToolbarItem::sid = 0;
 
 ToolbarItem::ToolbarItem(string name)
 {
-	XOJ_INIT_TYPE(ToolbarItem);
-
 	this->name = name;
 	this->id = ToolbarItem::sid++;
 
@@ -17,42 +15,29 @@ ToolbarItem::ToolbarItem(string name)
 
 ToolbarItem::ToolbarItem(const ToolbarItem& item)
 {
-	XOJ_INIT_TYPE(ToolbarItem);
-
 	this->id = item.id;
 	this->name = item.name;
 }
 
 ToolbarItem::ToolbarItem()
 {
-	XOJ_INIT_TYPE(ToolbarItem);
-
 	this->name = "";
 	this->id = -100;
 }
 
-ToolbarItem::~ToolbarItem()
-{
-	XOJ_RELEASE_TYPE(ToolbarItem);
-}
+ToolbarItem::~ToolbarItem() = default;
 
-string ToolbarItem::getName()
+auto ToolbarItem::getName() -> string
 {
-	XOJ_CHECK_TYPE(ToolbarItem);
-
 	return this->name;
 }
 
-bool ToolbarItem::operator==(ToolbarItem& other)
+auto ToolbarItem::operator==(ToolbarItem& other) -> bool
 {
-	XOJ_CHECK_TYPE(ToolbarItem);
-
 	return this->name == other.name;
 }
 
-int ToolbarItem::getId()
+auto ToolbarItem::getId() -> int
 {
-	XOJ_CHECK_TYPE(ToolbarItem);
-
 	return this->id;
 }

@@ -17,8 +17,6 @@ PageBackgroundChangeController::PageBackgroundChangeController(Control* control)
  : control(control)
  , currentPageType(new PageTypeMenu(control->getPageTypes(), control->getSettings(), false, true))
 {
-	XOJ_INIT_TYPE(PageBackgroundChangeController);
-
 	currentPageType->setListener(this);
 
 	currentPageType->hideCopyPage();
@@ -30,25 +28,17 @@ PageBackgroundChangeController::PageBackgroundChangeController(Control* control)
 
 PageBackgroundChangeController::~PageBackgroundChangeController()
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	delete this->currentPageType;
 	this->currentPageType = nullptr;
-
-	XOJ_RELEASE_TYPE(PageBackgroundChangeController);
 }
 
-GtkWidget* PageBackgroundChangeController::getMenu()
+auto PageBackgroundChangeController::getMenu() -> GtkWidget*
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	return currentPageType->getMenu();
 }
 
 void PageBackgroundChangeController::changeAllPagesBackground(PageType pt)
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	control->clearSelectionEndText();
 
 	Document* doc = control->getDocument();
@@ -87,15 +77,11 @@ void PageBackgroundChangeController::changeAllPagesBackground(PageType pt)
 
 void PageBackgroundChangeController::changeCurrentPageBackground(PageTypeInfo* info)
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	changeCurrentPageBackground(info->page);
 }
 
 void PageBackgroundChangeController::changeCurrentPageBackground(PageType& pageType)
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	if (ignoreEvent)
 	{
 		return;
@@ -111,7 +97,7 @@ void PageBackgroundChangeController::changeCurrentPageBackground(PageType& pageT
 
 	Document* doc = control->getDocument();
 	size_t pageNr = doc->indexOf(page);
-	if (pageNr == size_t_npos)
+	if (pageNr == npos)
 	{
 		return;  // should not happen...
 	}
@@ -137,10 +123,8 @@ void PageBackgroundChangeController::changeCurrentPageBackground(PageType& pageT
  *
  * @return true on success, false if the user cancels
  */
-bool PageBackgroundChangeController::applyImageBackground(PageRef page)
+auto PageBackgroundChangeController::applyImageBackground(PageRef page) -> bool
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	Document* doc = control->getDocument();
 
 	doc->lock();
@@ -200,7 +184,7 @@ bool PageBackgroundChangeController::applyImageBackground(PageRef page)
 		page->setSize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
 
 		size_t pageNr = doc->indexOf(page);
-		if (pageNr != size_t_npos)
+		if (pageNr != npos)
 		{
 			// Only if the page is already inserted into the document
 			control->firePageSizeChanged(pageNr);
@@ -215,10 +199,8 @@ bool PageBackgroundChangeController::applyImageBackground(PageRef page)
  *
  * @return true on success, false if the user cancels
  */
-bool PageBackgroundChangeController::applyPdfBackground(PageRef page)
+auto PageBackgroundChangeController::applyPdfBackground(PageRef page) -> bool
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	Document* doc = control->getDocument();
 
 	if (doc->getPdfPageCount() == 0)
@@ -231,7 +213,7 @@ bool PageBackgroundChangeController::applyPdfBackground(PageRef page)
 	}
 
 	doc->lock();
-	PdfPagesDialog* dlg = new PdfPagesDialog(control->getGladeSearchPath(), doc, control->getSettings());
+	auto* dlg = new PdfPagesDialog(control->getGladeSearchPath(), doc, control->getSettings());
 	doc->unlock();
 
 	dlg->show(GTK_WINDOW(control->getGtkWindow()));
@@ -256,10 +238,8 @@ bool PageBackgroundChangeController::applyPdfBackground(PageRef page)
  *
  * @return true on success, false if the user cancels
  */
-bool PageBackgroundChangeController::applyPageBackground(PageRef page, PageType pt)
+auto PageBackgroundChangeController::applyPageBackground(PageRef page, PageType pt) -> bool
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	if (pt.isPdfPage())
 	{
 		return applyPdfBackground(page);
@@ -280,8 +260,6 @@ bool PageBackgroundChangeController::applyPageBackground(PageRef page, PageType 
  */
 void PageBackgroundChangeController::copyBackgroundFromOtherPage(PageRef target, PageRef source)
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	// Copy page size
 	target->setSize(source->getWidth(), source->getHeight());
 
@@ -308,8 +286,6 @@ void PageBackgroundChangeController::copyBackgroundFromOtherPage(PageRef target,
 
 void PageBackgroundChangeController::insertNewPage(size_t position)
 {
-	XOJ_CHECK_TYPE(PageBackgroundChangeController);
-
 	control->clearSelectionEndText();
 
 	Document* doc = control->getDocument();

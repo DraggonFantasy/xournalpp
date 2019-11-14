@@ -19,20 +19,12 @@
 
 PenInputHandler::PenInputHandler(InputContext* inputContext) : AbstractInputHandler(inputContext)
 {
-	XOJ_INIT_TYPE(PenInputHandler);
 }
 
-PenInputHandler::~PenInputHandler()
-{
-	XOJ_CHECK_TYPE(PenInputHandler);
-
-	XOJ_RELEASE_TYPE(PenInputHandler);
-}
+PenInputHandler::~PenInputHandler() = default;
 
 void PenInputHandler::updateLastEvent(InputEvent* event)
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	if (!event)
 	{
 		return;
@@ -64,8 +56,6 @@ void PenInputHandler::updateLastEvent(InputEvent* event)
 
 void PenInputHandler::handleScrollEvent(InputEvent* event)
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	// use root coordinates as reference point because
 	// scrolling changes window relative coordinates
 	// see github Gnome/evince@1adce5486b10e763bed869
@@ -95,10 +85,8 @@ void PenInputHandler::handleScrollEvent(InputEvent* event)
 	}
 }
 
-bool PenInputHandler::actionStart(InputEvent* event)
+auto PenInputHandler::actionStart(InputEvent* event) -> bool
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	this->inputContext->focusWidget();
 
 	XojPageView* currentPage = this->getPageAtCurrentPosition(event);
@@ -186,10 +174,8 @@ bool PenInputHandler::actionStart(InputEvent* event)
 	return false;
 }
 
-bool PenInputHandler::actionMotion(InputEvent* event)
+auto PenInputHandler::actionMotion(InputEvent* event) -> bool
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	/*
 	 * Workaround for misbehaving devices where Enter events are not published every time
 	 * This is required to disable outside scrolling again
@@ -318,10 +304,8 @@ bool PenInputHandler::actionMotion(InputEvent* event)
 	}
 }
 
-bool PenInputHandler::actionEnd(InputEvent* event)
+auto PenInputHandler::actionEnd(InputEvent* event) -> bool
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	GtkXournal* xournal = inputContext->getXournal();
 	XournalppCursor* cursor = xournal->view->getCursor();
 	ToolHandler* toolHandler = inputContext->getToolHandler();
@@ -386,8 +370,6 @@ bool PenInputHandler::actionEnd(InputEvent* event)
 
 void PenInputHandler::actionPerform(InputEvent* event)
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 #ifdef DEBUG_INPUT
 	g_message("Discrete input action; modifier1=%s, modifier2=%2",
 	          this->modifier2 ? "true" : "false", this->modifier3 ? "true" : "false");
@@ -407,8 +389,6 @@ void PenInputHandler::actionPerform(InputEvent* event)
 
 void PenInputHandler::actionLeaveWindow(InputEvent* event)
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	if (!this->penInWidget)
 	{
 		return;
@@ -491,8 +471,6 @@ void PenInputHandler::actionLeaveWindow(InputEvent* event)
 
 void PenInputHandler::actionEnterWindow(InputEvent* event)
 {
-	XOJ_CHECK_TYPE(PenInputHandler);
-
 	this->penInWidget = true;
 
 	if (!this->inputContext->getSettings()->getInputSystemDrawOutsideWindowEnabled())

@@ -3,8 +3,6 @@
 
 AudioPlayer::AudioPlayer(Control* control, Settings* settings) : control(control), settings(settings)
 {
-	XOJ_INIT_TYPE(AudioPlayer);
-
 	this->audioQueue = new AudioQueue<float>();
 	this->portAudioConsumer = new PortAudioConsumer(this, this->audioQueue);
 	this->vorbisProducer = new VorbisProducer(this->audioQueue);
@@ -12,8 +10,6 @@ AudioPlayer::AudioPlayer(Control* control, Settings* settings) : control(control
 
 AudioPlayer::~AudioPlayer()
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	this->stop();
 
 	delete this->portAudioConsumer;
@@ -24,14 +20,10 @@ AudioPlayer::~AudioPlayer()
 
 	delete this->audioQueue;
 	this->audioQueue = nullptr;
-
-	XOJ_RELEASE_TYPE(AudioPlayer);
 }
 
-bool AudioPlayer::start(string filename, unsigned int timestamp)
+auto AudioPlayer::start(string filename, unsigned int timestamp) -> bool
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	// Start the producer for reading the data
 	bool status = this->vorbisProducer->start(std::move(filename), timestamp);
 
@@ -44,17 +36,13 @@ bool AudioPlayer::start(string filename, unsigned int timestamp)
 	return status;
 }
 
-bool AudioPlayer::isPlaying()
+auto AudioPlayer::isPlaying() -> bool
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	return this->portAudioConsumer->isPlaying();
 }
 
 void AudioPlayer::pause()
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	if (!this->portAudioConsumer->isPlaying())
 	{
 		return;
@@ -64,10 +52,8 @@ void AudioPlayer::pause()
 	this->portAudioConsumer->stopPlaying();
 }
 
-bool AudioPlayer::play()
+auto AudioPlayer::play() -> bool
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	if (this->portAudioConsumer->isPlaying())
 	{
 		return false;
@@ -78,8 +64,6 @@ bool AudioPlayer::play()
 
 void AudioPlayer::disableAudioPlaybackButtons()
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	if (this->audioQueue->hasStreamEnded())
 	{
 		this->control->getWindow()->disableAudioPlaybackButtons();
@@ -88,8 +72,6 @@ void AudioPlayer::disableAudioPlaybackButtons()
 
 void AudioPlayer::stop()
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
-
 	// Stop playing audio
 	this->portAudioConsumer->stopPlaying();
 
@@ -102,16 +84,20 @@ void AudioPlayer::stop()
 	this->audioQueue->reset();
 }
 
-vector<DeviceInfo> AudioPlayer::getOutputDevices()
+void AudioPlayer::seek(int seconds)
 {
-	XOJ_CHECK_TYPE(AudioPlayer);
+	// set seek flag here in vorbisProducer
+	this->vorbisProducer->seek(seconds);
+}
 
+auto AudioPlayer::getOutputDevices() -> vector<DeviceInfo>
+{
 	std::list<DeviceInfo> deviceList = this->portAudioConsumer->getOutputDevices();
 	return vector<DeviceInfo>{std::make_move_iterator(std::begin(deviceList)),
 							  std::make_move_iterator(std::end(deviceList))};
 }
 
-Settings* AudioPlayer::getSettings()
+auto AudioPlayer::getSettings() -> Settings*
 {
 	return this->settings;
 }

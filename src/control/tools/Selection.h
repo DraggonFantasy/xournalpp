@@ -30,8 +30,6 @@ public:
 	virtual void currentPos(double x, double y) = 0;
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	vector<Element*> selectedElements;
 	PageRef page;
@@ -58,8 +56,6 @@ public:
 	virtual bool contains(double x, double y);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	double sx;
 	double sy;
 	double ex;
@@ -87,7 +83,5 @@ public:
 	virtual bool contains(double x, double y);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	GList* points;
 };

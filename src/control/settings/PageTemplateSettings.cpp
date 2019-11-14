@@ -14,97 +14,68 @@ PageTemplateSettings::PageTemplateSettings()
    pageHeight(841.889764),
    backgroundColor(0xffffff)
 {
-	XOJ_INIT_TYPE(PageTemplateSettings);
-
 	backgroundType.format = PageTypeFormat::Lined;
 }
 
-PageTemplateSettings::~PageTemplateSettings()
-{
-	XOJ_RELEASE_TYPE(PageTemplateSettings);
-}
+PageTemplateSettings::~PageTemplateSettings() = default;
 
-bool PageTemplateSettings::isCopyLastPageSettings()
+auto PageTemplateSettings::isCopyLastPageSettings() -> bool
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	return this->copyLastPageSettings;
 }
 
 void PageTemplateSettings::setCopyLastPageSettings(bool copyLastPageSettings)
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	this->copyLastPageSettings = copyLastPageSettings;
 }
 
-bool PageTemplateSettings::isCopyLastPageSize()
+auto PageTemplateSettings::isCopyLastPageSize() -> bool
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	return this->copyLastPageSize;
 }
 
 void PageTemplateSettings::setCopyLastPageSize(bool copyLastPageSize)
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	this->copyLastPageSize = copyLastPageSize;
 }
 
-double PageTemplateSettings::getPageWidth()
+auto PageTemplateSettings::getPageWidth() -> double
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	return this->pageWidth;
 }
 
 void PageTemplateSettings::setPageWidth(double pageWidth)
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	this->pageWidth = pageWidth;
 }
 
-double PageTemplateSettings::getPageHeight()
+auto PageTemplateSettings::getPageHeight() -> double
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	return this->pageHeight;
 }
 
 void PageTemplateSettings::setPageHeight(double pageHeight)
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	this->pageHeight = pageHeight;
 }
 
-int PageTemplateSettings::getBackgroundColor()
+auto PageTemplateSettings::getBackgroundColor() -> int
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	return this->backgroundColor;
 }
 
 void PageTemplateSettings::setBackgroundColor(int backgroundColor)
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	this->backgroundColor = backgroundColor;
 }
 
-PageType PageTemplateSettings::getBackgroundType()
+auto PageTemplateSettings::getBackgroundType() -> PageType
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	return backgroundType;
 }
 
-PageType PageTemplateSettings::getPageInsertType()
+auto PageTemplateSettings::getPageInsertType() -> PageType
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	if (copyLastPageSettings)
 	{
 		return PageType(PageTypeFormat::Copy);
@@ -115,8 +86,6 @@ PageType PageTemplateSettings::getPageInsertType()
 
 void PageTemplateSettings::setBackgroundType(PageType backgroundType)
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	this->backgroundType = backgroundType;
 }
 
@@ -125,10 +94,8 @@ void PageTemplateSettings::setBackgroundType(PageType backgroundType)
  *
  * @return true if valid
  */
-bool PageTemplateSettings::parse(string tpl)
+auto PageTemplateSettings::parse(string tpl) -> bool
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	stringstream ss(tpl.c_str());
 	string line;
 
@@ -187,10 +154,8 @@ bool PageTemplateSettings::parse(string tpl)
 /**
  * Convert to a parsable string
  */
-string PageTemplateSettings::toString()
+auto PageTemplateSettings::toString() -> string
 {
-	XOJ_CHECK_TYPE(PageTemplateSettings);
-
 	string str = "xoj/template\n";
 
 	str += string("copyLastPageSize=") + (copyLastPageSize ? "true" : "false") + "\n";

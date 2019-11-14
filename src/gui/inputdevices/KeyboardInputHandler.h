@@ -17,7 +17,6 @@
 class KeyboardInputHandler : public AbstractInputHandler
 {
 private:
-	XOJ_TYPE_ATTRIB;
 public:
 	explicit KeyboardInputHandler(InputContext* inputContext);
 	~KeyboardInputHandler() override;

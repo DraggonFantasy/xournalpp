@@ -4,8 +4,6 @@
 
 BackgroundConfig::BackgroundConfig(string config)
 {
-	XOJ_INIT_TYPE(BackgroundConfig);
-
 	for (string s : StringUtils::split(config, ','))
 	{
 		size_t dotPos = s.find_last_of("=");
@@ -18,17 +16,10 @@ BackgroundConfig::BackgroundConfig(string config)
 	}
 }
 
-BackgroundConfig::~BackgroundConfig()
+BackgroundConfig::~BackgroundConfig() = default;
+
+auto BackgroundConfig::loadValue(string key, string& value) -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundConfig);
-
-	XOJ_RELEASE_TYPE(BackgroundConfig);
-}
-
-bool BackgroundConfig::loadValue(string key, string& value)
-{
-	XOJ_CHECK_TYPE(BackgroundConfig);
-
 	auto it = data.find(key);
 	if (it != this->data.end())
 	{
@@ -39,10 +30,8 @@ bool BackgroundConfig::loadValue(string key, string& value)
 	return false;
 }
 
-bool BackgroundConfig::loadValue(string key, int& value)
+auto BackgroundConfig::loadValue(string key, int& value) -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundConfig);
-
 	string str;
 	if (loadValue(key, str))
 	{
@@ -53,10 +42,8 @@ bool BackgroundConfig::loadValue(string key, int& value)
 	return false;
 }
 
-bool BackgroundConfig::loadValue(string key, double& value)
+auto BackgroundConfig::loadValue(string key, double& value) -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundConfig);
-
 	string str;
 	if (loadValue(key, str))
 	{
@@ -67,10 +54,8 @@ bool BackgroundConfig::loadValue(string key, double& value)
 	return false;
 }
 
-bool BackgroundConfig::loadValueHex(string key, int& value)
+auto BackgroundConfig::loadValueHex(string key, int& value) -> bool
 {
-	XOJ_CHECK_TYPE(BackgroundConfig);
-
 	string str;
 	if (loadValue(key, str))
 	{

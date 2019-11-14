@@ -32,8 +32,6 @@ public:
 	virtual void initWidget() = 0;
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	/**
 	 * Xournal Widget

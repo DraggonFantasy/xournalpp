@@ -6,7 +6,6 @@
 
 AudioController::AudioController(Settings* settings, Control* control)
 {
-	XOJ_INIT_TYPE(AudioController);
 	this->settings = settings;
 	this->control = control;
 	this->audioRecorder = new AudioRecorder(settings);
@@ -15,21 +14,15 @@ AudioController::AudioController(Settings* settings, Control* control)
 
 AudioController::~AudioController()
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	delete this->audioRecorder;
 	this->audioRecorder = nullptr;
 
 	delete this->audioPlayer;
 	this->audioPlayer = nullptr;
-
-	XOJ_RELEASE_TYPE(AudioController);
 }
 
-bool AudioController::startRecording()
+auto AudioController::startRecording() -> bool
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	if (!this->isRecording())
 	{
 		if (getAudioFolder().isEmpty())
@@ -39,13 +32,13 @@ bool AudioController::startRecording()
 
 		this->timestamp = static_cast<size_t>(g_get_monotonic_time() / 1000);
 
-		char buffer[50];
+		std::array<char, 50> buffer;
 		time_t secs = time(nullptr);
 		tm* t = localtime(&secs);
 		// This prints the date and time in ISO format.
-		sprintf(buffer, "%04d-%02d-%02d_%02d-%02d-%02d", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour,
-				t->tm_min, t->tm_sec);
-		string data(buffer);
+		sprintf(buffer.data(), "%04d-%02d-%02d_%02d-%02d-%02d", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+		        t->tm_hour, t->tm_min, t->tm_sec);
+		string data(buffer.data());
 		data += ".ogg";
 
 		audioFilename = data;
@@ -65,10 +58,8 @@ bool AudioController::startRecording()
 	return false;
 }
 
-bool AudioController::stopRecording()
+auto AudioController::stopRecording() -> bool
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	if (this->audioRecorder->isRecording())
 	{
 		audioFilename = "";
@@ -81,24 +72,18 @@ bool AudioController::stopRecording()
 	return true;
 }
 
-bool AudioController::isRecording()
+auto AudioController::isRecording() -> bool
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	return this->audioRecorder->isRecording();
 }
 
-bool AudioController::isPlaying()
+auto AudioController::isPlaying() -> bool
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	return this->audioPlayer->isPlaying();
 }
 
-bool AudioController::startPlayback(string filename, unsigned int timestamp)
+auto AudioController::startPlayback(string filename, unsigned int timestamp) -> bool
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	this->audioPlayer->stop();
 	bool status = this->audioPlayer->start(std::move(filename), timestamp);
 	if (status)
@@ -110,17 +95,23 @@ bool AudioController::startPlayback(string filename, unsigned int timestamp)
 
 void AudioController::pausePlayback()
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	this->control->getWindow()->getToolMenuHandler()->setAudioPlaybackPaused(true);
 
 	this->audioPlayer->pause();
 }
 
+void AudioController::seekForwards()
+{
+	this->audioPlayer->seek(this->settings->getDefaultSeekTime());
+}
+
+void AudioController::seekBackwards()
+{
+	this->audioPlayer->seek(-1 * this->settings->getDefaultSeekTime());
+}
+
 void AudioController::continuePlayback()
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	this->control->getWindow()->getToolMenuHandler()->setAudioPlaybackPaused(false);
 
 	this->audioPlayer->play();
@@ -128,23 +119,17 @@ void AudioController::continuePlayback()
 
 void AudioController::stopPlayback()
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	this->control->getWindow()->getToolMenuHandler()->disableAudioPlaybackButtons();
 	this->audioPlayer->stop();
 }
 
-string AudioController::getAudioFilename()
+auto AudioController::getAudioFilename() -> string
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	return this->audioFilename;
 }
 
-Path AudioController::getAudioFolder()
+auto AudioController::getAudioFolder() -> Path
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	string af = this->settings->getAudioFolder();
 
 	if (af.length() < 8)
@@ -159,23 +144,17 @@ Path AudioController::getAudioFolder()
 	return Path::fromUri(af);
 }
 
-size_t AudioController::getStartTime()
+auto AudioController::getStartTime() -> size_t
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	return this->timestamp;
 }
 
-vector<DeviceInfo> AudioController::getOutputDevices()
+auto AudioController::getOutputDevices() -> vector<DeviceInfo>
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	return this->audioPlayer->getOutputDevices();
 }
 
-vector<DeviceInfo> AudioController::getInputDevices()
+auto AudioController::getInputDevices() -> vector<DeviceInfo>
 {
-	XOJ_CHECK_TYPE(AudioController);
-
 	return this->audioRecorder->getInputDevices();
 }

@@ -9,8 +9,6 @@
 ScaleUndoAction::ScaleUndoAction(PageRef page, vector<Element*>* elements, double x0, double y0, double fx, double fy)
  : UndoAction("ScaleUndoAction")
 {
-	XOJ_INIT_TYPE(ScaleUndoAction);
-
 	this->page = page;
 	this->elements = *elements;
 	this->x0 = x0;
@@ -21,26 +19,18 @@ ScaleUndoAction::ScaleUndoAction(PageRef page, vector<Element*>* elements, doubl
 
 ScaleUndoAction::~ScaleUndoAction()
 {
-	XOJ_CHECK_TYPE(ScaleUndoAction);
-
-	this->page = NULL;
-
-	XOJ_RELEASE_TYPE(ScaleUndoAction);
+	this->page = nullptr;
 }
 
-bool ScaleUndoAction::undo(Control* control)
+auto ScaleUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(ScaleUndoAction);
-
 	applyScale(1 / this->fx, 1 / this->fy);
 	this->undone = true;
 	return true;
 }
 
-bool ScaleUndoAction::redo(Control* control)
+auto ScaleUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(ScaleUndoAction);
-
 	applyScale(this->fx, this->fy);
 	this->undone = false;
 	return true;
@@ -48,8 +38,6 @@ bool ScaleUndoAction::redo(Control* control)
 
 void ScaleUndoAction::applyScale(double fx, double fy)
 {
-	XOJ_CHECK_TYPE(ScaleUndoAction);
-
 	if (this->elements.empty()) return;
 
 	Range r(elements.front()->getX(), elements.front()->getY());
@@ -66,9 +54,7 @@ void ScaleUndoAction::applyScale(double fx, double fy)
 	this->page->fireRangeChanged(r);
 }
 
-string ScaleUndoAction::getText()
+auto ScaleUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(ScaleUndoAction);
-
 	return _("Scale");
 }

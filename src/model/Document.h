@@ -45,8 +45,8 @@ public:
 	XojPdfPageSPtr getPdfPage(size_t page);
 	XojPdfDocument& getPdfDocument();
 
-	void insertPage(PageRef p, size_t position);
-	void addPage(PageRef p);
+	void insertPage(const PageRef& p, size_t position);
+	void addPage(const PageRef& p);
 	PageRef getPage(size_t page);
 	void deletePage(size_t pNr);
 
@@ -54,7 +54,7 @@ public:
 	double getPageWidth(PageRef p);
 	double getPageHeight(PageRef p);
 
-	size_t indexOf(PageRef page);
+	size_t indexOf(const PageRef& page);
 
 	/**
 	 * @return The last error message to show to the user
@@ -64,7 +64,7 @@ public:
 	bool isPdfDocumentLoaded();
 	size_t findPdfPage(size_t pdfPage);
 
-	void operator=(Document& doc);
+	Document& operator=(const Document& doc);
 
 	void setFilename(Path filename);
 	Path getFilename();
@@ -100,10 +100,7 @@ private:
 	static bool fillPageLabels(GtkTreeModel* tree_model, GtkTreePath* path, GtkTreeIter* iter, Document* doc);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
-
-	DocumentHandler* handler = NULL;
+	DocumentHandler* handler = nullptr;
 
 	XojPdfDocument pdfDocument;
 
@@ -126,7 +123,7 @@ private:
 	/**
 	 * The bookmark contents model
 	 */
-	GtkTreeModel* contentsModel = NULL;
+	GtkTreeModel* contentsModel = nullptr;
 
 	/**
 	 *  create a backup before save, because the original file was an older fileversion
@@ -136,7 +133,7 @@ private:
 	/**
 	 * The preview for the file
 	 */
-	cairo_surface_t* preview = NULL;
+	cairo_surface_t* preview = nullptr;
 
 	/**
 	 * The lock of the document

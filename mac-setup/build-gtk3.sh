@@ -9,4 +9,5 @@ chmod +x gtk-osx-setup.sh
 ./gtk-osx-setup.sh
 
 jhbuild bootstrap
+jhbuild bootstrap-gtk-osx
 jhbuild build python meta-gtk-osx-bootstrap meta-gtk-osx-gtk3

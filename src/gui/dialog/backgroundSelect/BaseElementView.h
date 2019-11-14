@@ -74,8 +74,6 @@ private:
 	static gboolean mouseButtonPressCallback(GtkWidget* widget, GdkEventButton* event, BaseElementView* element);
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	BackgroundSelectDialogBase* dlg;
 
@@ -87,6 +85,6 @@ private:
 
 	bool selected = false;
 
-	GtkWidget* widget = NULL;
-	cairo_surface_t* crBuffer = NULL;
+	GtkWidget* widget = nullptr;
+	cairo_surface_t* crBuffer = nullptr;
 };

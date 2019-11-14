@@ -15,7 +15,6 @@
 PluginController::PluginController(Control* control)
  : control(control)
 {
-	XOJ_INIT_TYPE(PluginController);
 #ifdef ENABLE_PLUGINS
 	string path = control->getGladeSearchPath()->getFirstSearchPath();
 	if (StringUtils::endsWith(path, "ui"))
@@ -31,20 +30,21 @@ PluginController::PluginController(Control* control)
 }
 
 PluginController::~PluginController()
-{
-	XOJ_CHECK_TYPE(PluginController);
 #ifdef ENABLE_PLUGINS
+{
 
-	for (Plugin* p : this->plugins)
+
+	for (Plugin* p: this->plugins)
 	{
 		delete p;
 	}
 
 	this->plugins.clear();
-
-#endif
-	XOJ_RELEASE_TYPE(PluginController);
 }
+#else
+        = default;
+#endif
+
 
 /**
  * Load all plugins within this folder
@@ -53,12 +53,11 @@ PluginController::~PluginController()
  */
 void PluginController::loadPluginsFrom(string path)
 {
-	XOJ_CHECK_TYPE(PluginController);
 #ifdef ENABLE_PLUGINS
 
-	GError* error = NULL;
+	GError* error = nullptr;
 	GDir* dir = g_dir_open(path.c_str(), 0, &error);
-	if (error != NULL)
+	if (error != nullptr)
 	{
 		g_warning("Could not open plugin dir: «%s»", path.c_str());
 		g_error_free(error);
@@ -70,7 +69,7 @@ void PluginController::loadPluginsFrom(string path)
 	vector<string> pluginDisabled = StringUtils::split(settings->getPluginDisabled(), ',');
 
 	const gchar* file;
-	while ((file = g_dir_read_name(dir)) != NULL)
+	while ((file = g_dir_read_name(dir)) != nullptr)
 	{
 		string pluginFolder = path;
 		pluginFolder += "/";
@@ -106,8 +105,6 @@ void PluginController::loadPluginsFrom(string path)
  */
 void PluginController::registerToolbar()
 {
-	XOJ_CHECK_TYPE(PluginController);
-
 #ifdef ENABLE_PLUGINS
 	for (Plugin* p : this->plugins)
 	{
@@ -121,8 +118,6 @@ void PluginController::registerToolbar()
  */
 void PluginController::showPluginManager()
 {
-	XOJ_CHECK_TYPE(PluginController);
-
 	PluginDialog dlg(control->getGladeSearchPath(), control->getSettings());
 	dlg.loadPluginList(this);
 	dlg.show(control->getGtkWindow());
@@ -133,8 +128,6 @@ void PluginController::showPluginManager()
  */
 void PluginController::registerMenu()
 {
-	XOJ_CHECK_TYPE(PluginController);
-
 #ifdef ENABLE_PLUGINS
 	GtkWidget* menuPlugin = control->getWindow()->get("menuPlugin");
 	for (Plugin* p : this->plugins)
@@ -154,9 +147,7 @@ void PluginController::registerMenu()
 /**
  * Return the plugin list
  */
-vector<Plugin*>& PluginController::getPlugins()
+auto PluginController::getPlugins() -> vector<Plugin*>&
 {
-	XOJ_CHECK_TYPE(PluginController);
-
 	return plugins;
 }

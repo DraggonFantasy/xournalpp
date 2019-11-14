@@ -14,20 +14,17 @@
 // No include needed, this is included after PageView.h
 
 #include <util/audio/AudioPlayer.h>
+#include <optional>
 
 class BaseSelectObject
 {
 public:
 	BaseSelectObject(XojPageView* view)
- 	 : view(view),
-	   x(0),
-	   y(0)
+	 : view(view)
 	{
 	}
 
-	virtual ~BaseSelectObject()
-	{
-	}
+	virtual ~BaseSelectObject() = default;
 
 public:
 	virtual bool at(double x, double y)
@@ -56,7 +53,10 @@ protected:
 		{
 			if (e->intersectsArea(&matchRect))
 			{
-				return checkElement(e);
+				if (this->checkElement(e))
+				{
+					return true;
+				}
 			}
 		}
 		return false;
@@ -65,28 +65,26 @@ protected:
 	virtual bool checkElement(Element* e) = 0;
 
 protected:
-	GdkRectangle matchRect;
-	XojPageView* view;
-	double x;
-	double y;
+	GdkRectangle matchRect{};
+	XojPageView* view{};
+	double x{0};
+	double y{0};
 };
 
 class SelectObject : public BaseSelectObject
 {
 public:
 	SelectObject(XojPageView* view)
- 	 : BaseSelectObject(view),
-	   strokeMatch(NULL),
-	   elementMatch(NULL),
-	   gap(1000000000)
+	 : BaseSelectObject(view)
+	 , strokeMatch(nullptr)
+	 , elementMatch(nullptr)
+	 , gap(1000000000)
 	{
 	}
 
-	virtual ~SelectObject()
-	{
-	}
+	~SelectObject() override = default;
 
-	bool at(double x, double y)
+	bool at(double x, double y) override
 	{
 		BaseSelectObject::at(x, y);
 
@@ -108,7 +106,7 @@ public:
 	}
 
 protected:
-	virtual bool checkElement(Element* e)
+	bool checkElement(Element* e) override
 	{
 		if (e->getType() == ELEMENT_STROKE)
 		{
@@ -140,22 +138,29 @@ class PlayObject : public BaseSelectObject
 {
 public:
 	PlayObject(XojPageView* view)
- 	 : BaseSelectObject(view)
+	 : BaseSelectObject(view)
+	 , playbackStatus()
 	{
 	}
 
-	virtual ~PlayObject()
+	~PlayObject() override = default;
+
+	struct Status
 	{
-	}
+		bool success;
+		std::string filename;
+	};
+
+	std::optional<Status> playbackStatus;
 
 public:
-	bool at(double x, double y)
+	bool at(double x, double y) override
 	{
 		return BaseSelectObject::at(x, y);
 	}
 
 protected:
-	virtual bool checkElement(Element* e)
+	bool checkElement(Element* e) override
 	{
 		if (e->getType() != ELEMENT_STROKE && e->getType() != ELEMENT_TEXT)
 		{
@@ -179,8 +184,10 @@ protected:
 
 					fn = path.str();
 				}
-				view->getXournal()->getControl()->getAudioController()->startPlayback(fn, (unsigned int) ts);
-				return true;
+				auto* ac = view->getXournal()->getControl()->getAudioController();
+				bool success = ac->startPlayback(fn, (unsigned int) ts);
+				playbackStatus = {success, fn};
+				return success;
 			}
 		}
 		return false;

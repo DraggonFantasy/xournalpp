@@ -38,6 +38,4 @@ public:
 	virtual XojPdfBookmarkIterator* getContentsIter() = 0;
 
 private:
-	XOJ_TYPE_ATTRIB;
 };
-

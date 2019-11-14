@@ -1,8 +1,6 @@
 #include "XojPdfPage.h"
 
-XojPdfRectangle::XojPdfRectangle()
-{
-}
+XojPdfRectangle::XojPdfRectangle() = default;
 
 XojPdfRectangle::XojPdfRectangle(double x1, double y1, double x2, double y2)
  : x1(x1),
@@ -12,12 +10,6 @@ XojPdfRectangle::XojPdfRectangle(double x1, double y1, double x2, double y2)
 {
 }
 
-XojPdfPage::XojPdfPage()
-{
-	XOJ_INIT_TYPE(XojPdfPage);
-}
+XojPdfPage::XojPdfPage() = default;
 
-XojPdfPage::~XojPdfPage()
-{
-	XOJ_RELEASE_TYPE(XojPdfPage);
-}
+XojPdfPage::~XojPdfPage() = default;

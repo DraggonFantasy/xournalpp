@@ -12,12 +12,10 @@
 PdfPagesDialog::PdfPagesDialog(GladeSearchpath* gladeSearchPath, Document* doc, Settings* settings)
  : BackgroundSelectDialogBase(gladeSearchPath, doc, settings, "pdfpages.glade", "pdfPagesDialog")
 {
-	XOJ_INIT_TYPE(PdfPagesDialog);
-
 	for (size_t i = 0; i < doc->getPdfPageCount(); i++)
 	{
 		XojPdfPageSPtr p = doc->getPdfPage(i);
-		PdfElementView* pv = new PdfElementView(elements.size(), p, this);
+		auto* pv = new PdfElementView(elements.size(), p, this);
 		elements.push_back(pv);
 	}
 	if (doc->getPdfPageCount() > 0)
@@ -45,17 +43,10 @@ PdfPagesDialog::PdfPagesDialog(GladeSearchpath* gladeSearchPath, Document* doc, 
 	g_signal_connect(get("buttonOk"), "clicked", G_CALLBACK(okButtonCallback), this);
 }
 
-PdfPagesDialog::~PdfPagesDialog()
-{
-	XOJ_CHECK_TYPE(PdfPagesDialog);
-
-	XOJ_RELEASE_TYPE(PdfPagesDialog);
-}
+PdfPagesDialog::~PdfPagesDialog() = default;
 
 void PdfPagesDialog::updateOkButton()
 {
-	XOJ_CHECK_TYPE(PdfPagesDialog);
-
 	bool valid = false;
 	if (selected >= 0 && selected < (int)elements.size())
 	{
@@ -68,20 +59,16 @@ void PdfPagesDialog::updateOkButton()
 
 void PdfPagesDialog::okButtonCallback(GtkButton* button, PdfPagesDialog* dlg)
 {
-	XOJ_CHECK_TYPE_OBJ(dlg, PdfPagesDialog);
-
 	dlg->confirmed = true;
 }
 
 void PdfPagesDialog::onlyNotUsedCallback(GtkToggleButton* tb, PdfPagesDialog* dlg)
 {
-	XOJ_CHECK_TYPE_OBJ(dlg, PdfPagesDialog);
-
 	if (gtk_toggle_button_get_active(tb))
 	{
 		for (BaseElementView* p : dlg->elements)
 		{
-			PdfElementView* pv = (PdfElementView*)p;
+			auto* pv = (PdfElementView*) p;
 			pv->setHideUnused();
 		}
 	}
@@ -94,17 +81,13 @@ void PdfPagesDialog::onlyNotUsedCallback(GtkToggleButton* tb, PdfPagesDialog* dl
 	dlg->updateOkButton();
 }
 
-double PdfPagesDialog::getZoom()
+auto PdfPagesDialog::getZoom() -> double
 {
-	XOJ_CHECK_TYPE(PdfPagesDialog);
-
 	return 0.25;
 }
 
-int PdfPagesDialog::getSelectedPage()
+auto PdfPagesDialog::getSelectedPage() -> int
 {
-	XOJ_CHECK_TYPE(PdfPagesDialog);
-
 	if (confirmed)
 	{
 		return this->selected;
@@ -115,14 +98,12 @@ int PdfPagesDialog::getSelectedPage()
 
 void PdfPagesDialog::show(GtkWindow* parent)
 {
-	XOJ_CHECK_TYPE(PdfPagesDialog);
-
 	GtkWidget* w = get("cbOnlyNotUsed");
 
 	int unused = 0;
 	for (BaseElementView* p : elements)
 	{
-		PdfElementView* pv = (PdfElementView*)p;
+		auto* pv = (PdfElementView*) p;
 		if (!pv->isUsed())
 		{
 			unused++;

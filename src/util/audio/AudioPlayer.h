@@ -30,14 +30,13 @@ public:
 	void stop();
 	bool play();
 	void pause();
+	void seek(int seconds);
 
 	vector<DeviceInfo> getOutputDevices();
 
 	Settings* getSettings();
 	void disableAudioPlaybackButtons();
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	Settings* settings = nullptr;
 	Control* control = nullptr;

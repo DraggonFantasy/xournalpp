@@ -17,28 +17,20 @@
 #define PIXEL_MOTION_THRESHOLD 0.3
 
 InputHandler::InputHandler(XournalView* xournal, XojPageView* redrawable, PageRef page)
- : xournal(xournal),
-   redrawable(redrawable),
-   page(page),
-   stroke(NULL)
+ : xournal(xournal)
+ , redrawable(redrawable)
+ , page(page)
+ , stroke(nullptr)
 {
-	XOJ_INIT_TYPE(InputHandler);
 }
 
-InputHandler::~InputHandler()
-{
-	XOJ_CHECK_TYPE(InputHandler);
-
-	XOJ_RELEASE_TYPE(InputHandler);
-}
+InputHandler::~InputHandler() = default;
 
 /**
  * @return Current editing stroke
  */
-Stroke* InputHandler::getStroke()
+auto InputHandler::getStroke() -> Stroke*
 {
-	XOJ_CHECK_TYPE(InputHandler);
-
 	return stroke;
 }
 
@@ -53,8 +45,6 @@ void InputHandler::resetShapeRecognizer()
 
 void InputHandler::createStroke(Point p)
 {
-	XOJ_CHECK_TYPE(InputHandler);
-
 	ToolHandler* h = xournal->getControl()->getToolHandler();
 
 	stroke = new Stroke();
@@ -89,9 +79,7 @@ void InputHandler::createStroke(Point p)
 	stroke->addPoint(p);
 }
 
-bool InputHandler::validMotion(Point p, Point q)
+auto InputHandler::validMotion(Point p, Point q) -> bool
 {
-	XOJ_CHECK_TYPE(InputHandler);
-
 	return hypot(p.x - q.x, p.y - q.y) >= PIXEL_MOTION_THRESHOLD;
 }

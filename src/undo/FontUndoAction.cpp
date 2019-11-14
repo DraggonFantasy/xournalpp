@@ -25,36 +25,26 @@ public:
 FontUndoAction::FontUndoAction(PageRef page, Layer* layer)
  : UndoAction("FontUndoAction")
 {
-	XOJ_INIT_TYPE(FontUndoAction);
-
 	this->page = page;
 	this->layer = layer;
 }
 
 FontUndoAction::~FontUndoAction()
 {
-	XOJ_CHECK_TYPE(FontUndoAction);
-
 	for (FontUndoActionEntry* e : this->data)
 	{
 		delete e;
 	}
 	this->data.clear();
-
-	XOJ_RELEASE_TYPE(FontUndoAction);
 }
 
 void FontUndoAction::addStroke(Text* e, XojFont& oldFont, XojFont& newFont)
 {
-	XOJ_CHECK_TYPE(FontUndoAction);
-
 	this->data.push_back(new FontUndoActionEntry(e, oldFont, newFont));
 }
 
-bool FontUndoAction::undo(Control* control)
+auto FontUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(FontUndoAction);
-
 	if (this->data.empty())
 	{
 		return true;
@@ -69,18 +59,18 @@ bool FontUndoAction::undo(Control* control)
 	for (FontUndoActionEntry* e : this->data)
 	{
 		// size with old font
-		x1 = MIN(x1, e->e->getX());
-		x2 = MAX(x2, e->e->getX() + e->e->getElementWidth());
-		y1 = MIN(y1, e->e->getY());
-		y2 = MAX(y2, e->e->getY() + e->e->getElementHeight());
+		x1 = std::min(x1, e->e->getX());
+		x2 = std::max(x2, e->e->getX() + e->e->getElementWidth());
+		y1 = std::min(y1, e->e->getY());
+		y2 = std::max(y2, e->e->getY() + e->e->getElementHeight());
 
 		e->e->setFont(e->oldFont);
 
 		// size with new font
-		x1 = MIN(x1, e->e->getX());
-		x2 = MAX(x2, e->e->getX() + e->e->getElementWidth());
-		y1 = MIN(y1, e->e->getY());
-		y2 = MAX(y2, e->e->getY() + e->e->getElementHeight());
+		x1 = std::min(x1, e->e->getX());
+		x2 = std::max(x2, e->e->getX() + e->e->getElementWidth());
+		y1 = std::min(y1, e->e->getY());
+		y2 = std::max(y2, e->e->getY() + e->e->getElementHeight());
 	}
 
 	Rectangle rect(x1, y1, x2 - x1, y2 - y1);
@@ -89,10 +79,8 @@ bool FontUndoAction::undo(Control* control)
 	return true;
 }
 
-bool FontUndoAction::redo(Control* control)
+auto FontUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(FontUndoAction);
-
 	if (this->data.empty())
 	{
 		return true;
@@ -107,18 +95,18 @@ bool FontUndoAction::redo(Control* control)
 	for (FontUndoActionEntry* e : this->data)
 	{
 		// size with old font
-		x1 = MIN(x1, e->e->getX());
-		x2 = MAX(x2, e->e->getX() + e->e->getElementWidth());
-		y1 = MIN(y1, e->e->getY());
-		y2 = MAX(y2, e->e->getY() + e->e->getElementHeight());
+		x1 = std::min(x1, e->e->getX());
+		x2 = std::max(x2, e->e->getX() + e->e->getElementWidth());
+		y1 = std::min(y1, e->e->getY());
+		y2 = std::max(y2, e->e->getY() + e->e->getElementHeight());
 
 		e->e->setFont(e->newFont);
 
 		// size with new font
-		x1 = MIN(x1, e->e->getX());
-		x2 = MAX(x2, e->e->getX() + e->e->getElementWidth());
-		y1 = MIN(y1, e->e->getY());
-		y2 = MAX(y2, e->e->getY() + e->e->getElementHeight());
+		x1 = std::min(x1, e->e->getX());
+		x2 = std::max(x2, e->e->getX() + e->e->getElementWidth());
+		y1 = std::min(y1, e->e->getY());
+		y2 = std::max(y2, e->e->getY() + e->e->getElementHeight());
 	}
 
 	Rectangle rect(x1, y1, x2 - x1, y2 - y1);
@@ -127,9 +115,7 @@ bool FontUndoAction::redo(Control* control)
 	return true;
 }
 
-string FontUndoAction::getText()
+auto FontUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(FontUndoAction);
-
 	return _("Change font");
 }

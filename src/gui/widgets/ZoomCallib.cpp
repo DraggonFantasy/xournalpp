@@ -1,6 +1,6 @@
 #include "ZoomCallib.h"
 
-G_DEFINE_TYPE (ZoomCallib, zoomcallib, GTK_TYPE_WIDGET); // @suppress("Unused static function")
+G_DEFINE_TYPE(ZoomCallib, zoomcallib, GTK_TYPE_WIDGET);  //NOLINT // @suppress("Unused static function")
 
 static void
 zoomcallib_get_preferred_width(GtkWidget* widget,
@@ -14,7 +14,7 @@ zoomcallib_get_preferred_height(GtkWidget* widget,
 static void zoomcallib_size_allocate(GtkWidget* widget,
                                      GtkAllocation* allocation);
 static void zoomcallib_realize(GtkWidget* widget);
-static gboolean zoomcallib_draw(GtkWidget* widget, cairo_t* cr);
+static auto zoomcallib_draw(GtkWidget* widget, cairo_t* cr) -> gboolean;
 //static void zoomcallib_destroy(GtkObject* object);
 
 void zoomcallib_set_val(ZoomCallib* callib, gint val)
@@ -27,9 +27,9 @@ void zoomcallib_set_val(ZoomCallib* callib, gint val)
 	}
 }
 
-GtkWidget* zoomcallib_new()
+auto zoomcallib_new() -> GtkWidget*
 {
-	return GTK_WIDGET(g_object_new(zoomcallib_get_type(), NULL));
+	return GTK_WIDGET(g_object_new(zoomcallib_get_type(), nullptr));
 }
 
 static void zoomcallib_class_init(ZoomCallibClass* klass)
@@ -63,9 +63,9 @@ static void zoomcallib_get_preferred_height(GtkWidget* widget, gint* minimal_hei
 
 static void zoomcallib_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
-	g_return_if_fail(widget != NULL);
+	g_return_if_fail(widget != nullptr);
 	g_return_if_fail(IS_ZOOM_CALLIB(widget));
-	g_return_if_fail(allocation != NULL);
+	g_return_if_fail(allocation != nullptr);
 
 	gtk_widget_set_allocation(widget, allocation);
 
@@ -82,10 +82,10 @@ static void zoomcallib_realize(GtkWidget* widget)
 	guint attributes_mask;
 	GtkAllocation allocation;
 
-	g_return_if_fail(widget != NULL);
+	g_return_if_fail(widget != nullptr);
 	g_return_if_fail(IS_ZOOM_CALLIB(widget));
 
-	gtk_widget_set_realized(widget, TRUE);
+	gtk_widget_set_realized(widget, true);
 
 	attributes.window_type = GDK_WINDOW_CHILD;
 
@@ -107,7 +107,7 @@ static void zoomcallib_realize(GtkWidget* widget)
 	gdk_window_set_user_data(gtk_widget_get_window(widget), widget);
 }
 
-static gboolean zoomcallib_draw(GtkWidget* widget, cairo_t* cr)
+static auto zoomcallib_draw(GtkWidget* widget, cairo_t* cr) -> gboolean
 {
 	if(!IS_ZOOM_CALLIB(widget))
 	{
@@ -131,13 +131,13 @@ static gboolean zoomcallib_draw(GtkWidget* widget, cairo_t* cr)
 		height = allocation.height - 10;
 	}
 
-	int i = 0;
 
 	cairo_select_font_face(cr, "Serif", CAIRO_FONT_SLANT_NORMAL,
 	                       CAIRO_FONT_WEIGHT_BOLD);
 	cairo_set_font_size(cr, 13);
 
-	for (gdouble x = 2; x < allocation.width; x += hafCm, i++)
+	gdouble x = 2;
+	for (int i = 0; x < allocation.width; x += hafCm, ++i)
 	{
 		int y;
 		if (i % 2 == 0)
@@ -169,5 +169,5 @@ static gboolean zoomcallib_draw(GtkWidget* widget, cairo_t* cr)
 		}
 	}
 
-	return TRUE;
+	return true;
 }

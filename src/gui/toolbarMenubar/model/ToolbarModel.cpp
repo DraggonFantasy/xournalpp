@@ -6,36 +6,25 @@
 
 #include <fstream>
 
-ToolbarModel::ToolbarModel()
-{
-	XOJ_INIT_TYPE(ToolbarModel);
-}
+ToolbarModel::ToolbarModel() = default;
 
 ToolbarModel::~ToolbarModel()
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	for (ToolbarData* data : this->toolbars)
 	{
 		delete data;
 	}
 	this->toolbars.clear();
-
-	XOJ_RELEASE_TYPE(ToolbarModel);
 }
 
-vector<ToolbarData*>* ToolbarModel::getToolbars()
+auto ToolbarModel::getToolbars() -> vector<ToolbarData*>*
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	return &this->toolbars;
 }
 
 void ToolbarModel::parseGroup(GKeyFile* config, const char* group, bool predefined)
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
-	ToolbarData* data = new ToolbarData(predefined);
+	auto* data = new ToolbarData(predefined);
 
 	data->name = (predefined ? "predef_" : "custom_");
 	data->id = group;
@@ -47,8 +36,6 @@ void ToolbarModel::parseGroup(GKeyFile* config, const char* group, bool predefin
 
 void ToolbarModel::remove(ToolbarData* data)
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	for (size_t i = 0; i < this->toolbars.size(); i++)
 	{
 		if (this->toolbars[i] == data)
@@ -61,18 +48,14 @@ void ToolbarModel::remove(ToolbarData* data)
 
 void ToolbarModel::add(ToolbarData* data)
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	this->toolbars.push_back(data);
 }
 
-bool ToolbarModel::parse(string filename, bool predefined)
+auto ToolbarModel::parse(string filename, bool predefined) -> bool
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	GKeyFile* config = g_key_file_new();
 	g_key_file_set_list_separator(config, ',');
-	if (!g_key_file_load_from_file(config, filename.c_str(), G_KEY_FILE_NONE, NULL))
+	if (!g_key_file_load_from_file(config, filename.c_str(), G_KEY_FILE_NONE, nullptr))
 	{
 		g_key_file_free(config);
 		return false;
@@ -93,8 +76,6 @@ bool ToolbarModel::parse(string filename, bool predefined)
 
 void ToolbarModel::initCopyNameId(ToolbarData* data)
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	for (int i = 0; i < 100; i++)
 	{
 		string id = data->getId() + " Copy";
@@ -127,10 +108,8 @@ void ToolbarModel::initCopyNameId(ToolbarData* data)
 	}
 }
 
-bool ToolbarModel::existsId(string id)
+auto ToolbarModel::existsId(string id) -> bool
 {
-	XOJ_CHECK_TYPE(ToolbarModel);
-
 	for (ToolbarData* data : this->toolbars)
 	{
 		if (data->getId() == id)
@@ -175,7 +154,7 @@ void ToolbarModel::save(Path filename)
 	GKeyFile* config = g_key_file_new();
 	g_key_file_set_list_separator(config, ',');
 
-	g_key_file_set_comment(config, NULL, NULL, TOOLBAR_INI_HEADER, NULL);
+	g_key_file_set_comment(config, nullptr, nullptr, TOOLBAR_INI_HEADER, nullptr);
 
 	for (ToolbarData* data : this->toolbars)
 	{
@@ -186,12 +165,12 @@ void ToolbarModel::save(Path filename)
 	}
 
 	gsize len = 0;
-	char* data = g_key_file_to_data(config, &len, NULL);
+	char* data = g_key_file_to_data(config, &len, nullptr);
 
-	GError* error = NULL;
+	GError* error = nullptr;
 	if (!g_file_set_contents(filename.c_str(), data, len, &error))
 	{
-		XojMsgBox::showErrorToUser(NULL, error->message);
+		XojMsgBox::showErrorToUser(nullptr, error->message);
 		g_error_free(error);
 	}
 	

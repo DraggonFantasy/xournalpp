@@ -6,60 +6,42 @@
 ScrollHandlingGtk::ScrollHandlingGtk(GtkScrollable* scrollable)
  : ScrollHandling(gtk_scrollable_get_hadjustment(scrollable), gtk_scrollable_get_vadjustment(scrollable))
 {
-	XOJ_INIT_TYPE(ScrollHandlingGtk);
 }
 
-ScrollHandlingGtk::~ScrollHandlingGtk()
-{
-	XOJ_RELEASE_TYPE(ScrollHandlingGtk);
-}
+ScrollHandlingGtk::~ScrollHandlingGtk() = default;
 
 void ScrollHandlingGtk::setLayoutSize(int width, int height)
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
 	gtk_widget_queue_resize(xournal);
 }
 
-int ScrollHandlingGtk::getPrefferedWidth()
+auto ScrollHandlingGtk::getPreferredWidth() -> int
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
-	return layout->getLayoutWidth();;
+	return layout->getMinimalWidth();
 }
 
-int ScrollHandlingGtk::getPrefferedHeight()
+auto ScrollHandlingGtk::getPreferredHeight() -> int
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
-	return layout->getLayoutHeight();
+	return layout->getMinimalHeight();
 }
 
 void ScrollHandlingGtk::translate(cairo_t* cr, double& x1, double& x2, double& y1, double& y2)
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
 	// Nothing to do here - all done by GTK
 }
 
 void ScrollHandlingGtk::translate(double& x, double& y)
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
 	// Nothing to do here - all done by GTK
 }
 
-bool ScrollHandlingGtk::fullRepaint()
+auto ScrollHandlingGtk::fullRepaint() -> bool
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
 	return false;
 }
 
 void ScrollHandlingGtk::scrollChanged()
 {
-	XOJ_CHECK_TYPE(ScrollHandlingGtk);
-
 	// Nothing to do here - all done by GTK
 }
 

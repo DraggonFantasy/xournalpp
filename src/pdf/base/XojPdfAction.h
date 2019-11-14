@@ -26,6 +26,4 @@ public:
 	virtual string getTitle() = 0;
 
 private:
-	XOJ_TYPE_ATTRIB;
 };
-

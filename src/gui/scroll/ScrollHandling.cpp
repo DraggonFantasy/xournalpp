@@ -5,25 +5,17 @@ ScrollHandling::ScrollHandling(GtkAdjustment* adjHorizontal, GtkAdjustment* adjV
  : adjHorizontal(adjHorizontal),
    adjVertical(adjVertical)
 {
-	XOJ_INIT_TYPE(ScrollHandling);
 }
 
-ScrollHandling::~ScrollHandling()
-{
-	XOJ_RELEASE_TYPE(ScrollHandling);
-}
+ScrollHandling::~ScrollHandling() = default;
 
-GtkAdjustment* ScrollHandling::getHorizontal()
+auto ScrollHandling::getHorizontal() -> GtkAdjustment*
 {
-	XOJ_CHECK_TYPE(ScrollHandling);
-
 	return adjHorizontal;
 }
 
-GtkAdjustment* ScrollHandling::getVertical()
+auto ScrollHandling::getVertical() -> GtkAdjustment*
 {
-	XOJ_CHECK_TYPE(ScrollHandling);
-
 	return adjVertical;
 }
 

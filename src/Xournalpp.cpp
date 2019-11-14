@@ -15,7 +15,7 @@
 #include <CrashHandler.h>
 #include <Stacktrace.h>
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
 	// init crash handler
 	installCrashHandlers();
@@ -25,16 +25,12 @@ int main(int argc, char* argv[])
 #endif
 
 	// Use this two line to test the crash handler...
-//	int* crash = NULL;
-//	*crash = 0;
+	//	int* crash = nullptr;
+	//	*crash = 0;
 
-	XournalMain* main = new XournalMain();
+	auto* main = new XournalMain();
 	int result = main->run(argc, argv);
 	delete main;
-
-#ifdef DEV_MEMORY_LEAK_CHECKING
-	xoj_momoryleak_printRemainingObjects();
-#endif
 
 #ifdef DEV_CALL_LOG
 	Log::closelog();

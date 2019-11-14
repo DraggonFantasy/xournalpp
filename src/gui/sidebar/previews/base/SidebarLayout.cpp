@@ -5,16 +5,9 @@
 
 #include <list>
 
-SidebarLayout::SidebarLayout()
-{
-	XOJ_INIT_TYPE(SidebarLayout);
+SidebarLayout::SidebarLayout() = default;
 
-}
-
-SidebarLayout::~SidebarLayout()
-{
-	XOJ_RELEASE_TYPE(SidebarLayout);
-}
+SidebarLayout::~SidebarLayout() = default;
 
 class SidebarRow
 {
@@ -31,7 +24,7 @@ public:
 	}
 
 public:
-	bool isSpaceFor(SidebarPreviewBaseEntry* p)
+	auto isSpaceFor(SidebarPreviewBaseEntry* p) -> bool
 	{
 		if (this->list.size() == 0)
 		{
@@ -57,24 +50,24 @@ public:
 		this->currentWidth = 0;
 	}
 
-	int getCount()
+	auto getCount() -> int
 	{
 		return this->list.size();
 	}
 
-	int getWidth()
+	auto getWidth() -> int
 	{
 		return this->currentWidth;
 	}
 
-	int placeAt(int y, GtkLayout* layout)
+	auto placeAt(int y, GtkLayout* layout) -> int
 	{
 		int height = 0;
 		int x = 0;
 
 		for (SidebarPreviewBaseEntry* p : this->list)
 		{
-			height = MAX(height, p->getHeight());
+			height = std::max(height, p->getHeight());
 		}
 
 
@@ -119,7 +112,7 @@ void SidebarLayout::layout(SidebarPreviewBase* sidebar)
 		{
 			y += row.placeAt(y, GTK_LAYOUT(sidebar->iconViewPreview));
 
-			width = MAX(width, row.getWidth());
+			width = std::max(width, row.getWidth());
 
 			row.clear();
 			row.add(p);
@@ -130,7 +123,7 @@ void SidebarLayout::layout(SidebarPreviewBase* sidebar)
 	{
 		y += row.placeAt(y, GTK_LAYOUT(sidebar->iconViewPreview));
 
-		width = MAX(width, row.getWidth());
+		width = std::max(width, row.getWidth());
 
 		row.clear();
 	}

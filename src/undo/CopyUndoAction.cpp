@@ -9,25 +9,17 @@
 CopyUndoAction::CopyUndoAction(PageRef pageref, int pageNr)
  : UndoAction("CopyUndoAction")
 {
-	XOJ_INIT_TYPE(CopyUndoAction);
-
 	this->page = pageref;
 	this->pageNr = pageNr;
 }
 
 CopyUndoAction::~CopyUndoAction()
 {
-	XOJ_CHECK_TYPE(CopyUndoAction);
-
-	this->page = NULL;
-
-	XOJ_RELEASE_TYPE(CopyUndoAction);
+	this->page = nullptr;
 }
 
-bool CopyUndoAction::undo(Control* control)
+auto CopyUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(CopyUndoAction);
-
 	Document* doc = control->getDocument();
 
 	// in order to fix the hang, we need to get out
@@ -48,10 +40,8 @@ bool CopyUndoAction::undo(Control* control)
 	return true;
 }
 
-bool CopyUndoAction::redo(Control* control)
+auto CopyUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(CopyUndoAction);
-
 	Document* doc = control->getDocument();
 
 	// just in case there would be a hang here,
@@ -74,9 +64,7 @@ bool CopyUndoAction::redo(Control* control)
 	return true;
 }
 
-string CopyUndoAction::getText()
+auto CopyUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(CopyUndoAction);
-
 	return _("Copy page");
 }

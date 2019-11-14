@@ -1,8 +1,15 @@
 # Xournal++
 
-[![Build Status](https://travis-ci.org/xournalpp/xournalpp.svg?branch=string_new)](https://travis-ci.org/xournalpp/xournalpp)
-[![Build Status](https://dev.azure.com/xournalpp/xournalpp/_apis/build/status/xournalpp.xournalpp?branchName=master&stageName=Build_Test_Stage&jobName=Test%20Xournal%2B%2B%20on%20Linux)](https://dev.azure.com/xournalpp/xournalpp/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/xournalpp/xournalpp/_apis/build/status/CI?branchName=master)](https://dev.azure.com/xournalpp/xournalpp/_build/latest?definitionId=1&branchName=master)
 [![Join the chat at https://gitter.im/xournalpp/xournalpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/xournalpp/xournalpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+## Please help us with an important decision
+We would like to have your feedback concerning the new rendering system. One of the big changes will be that it will support infinity pages. Of course we will still provide support for showing the old multi-page documents. Therefore we would like to know how you want to have these rendered in the future. For this reason we have a small poll we kindly ask you to fill out:
+
+https://doodle.com/poll/svz5ezk3wpd3zzd3
+
+## Important Notice
+For some required changes to our code base we can currently not admit any pull requests. We are very thankful to anybody that is willing to work on Xournal++ and hope that this inconvenience will not deter you from helping us out. The last PR that will be merged before we do the extensive changes to the code base is #1430, which will then be followed by one last release before our PR freeze. Afterwards we will do the necessary work to ensure a continued solid development of Xournal++. Once we are finished we will remove this note and welcome all your PRs with open hands! Thanks for your support!
 
 <table border="0px" ><tr><td width = 600px>
 
@@ -138,17 +145,17 @@ Use the `Play Object` tool to click on a stroke or text node and listen to the c
 
 ## Installing
 ### Ubuntu and derivates
-````bash
+```bash
 sudo add-apt-repository ppa:andreasbutti/xournalpp-master
 sudo apt update
 sudo apt install xournalpp
-````
+```
 
-### OpenSuse
+### openSUSE
 On openSUSE Tumbleweed, the released version of xournalpp is available from the main repository:
-````bash
+```bash
 sudo zypper in xournalpp
-````
+```
 
 For openSUSE Leap 15.0 and earlier, use the install link from [X11:Utilities](https://software.opensuse.org//download.html?project=X11%3AUtilities&package=xournalpp).
 
@@ -158,6 +165,23 @@ For all versions of openSUSE, bleeding edge packages synced to xournalpp git mas
 The most recent stable release is available [in the [extra] repository](https://www.archlinux.org/packages/?q=xournalpp).
 
 To build the latest state of the master branch yourself, use [this AUR package](https://aur.archlinux.org/packages/xournalpp-git/).
+
+### Flatpak
+
+We officially support a [FlatHub
+release](https://flathub.org/apps/details/com.github.xournalpp.xournalpp), which
+can be installed with
+
+```bash
+flatpak install flathub com.github.xournalpp.xournalpp
+```
+
+Note that for Xournal++ to work properly, you must have at least one GTK theme
+and one icon theme installed on Flatpak.
+
+The Flatpak manifest can be found at the [Xournal++ Flatpak packaging
+repository](https://github.com/flathub/com.github.xournalpp.xournalpp), and all
+Flatpak-related packaging issues should be reported there.
 
 ### Windows
 **The windows Version has a Bug:**

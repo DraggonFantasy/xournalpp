@@ -5,32 +5,22 @@
 
 #include <StringUtils.h>
 
-GtkWidget* gtk_invisible_new();
+auto gtk_invisible_new() -> GtkWidget*;
 
 FullscreenHandler::FullscreenHandler(Settings* settings)
  : settings(settings)
 {
-	XOJ_INIT_TYPE(FullscreenHandler);
 }
 
-FullscreenHandler::~FullscreenHandler()
+FullscreenHandler::~FullscreenHandler() = default;
+
+auto FullscreenHandler::isFullscreen() -> bool
 {
-	XOJ_CHECK_TYPE(FullscreenHandler);
-
-	XOJ_RELEASE_TYPE(FullscreenHandler);
-}
-
-bool FullscreenHandler::isFullscreen()
-{
-	XOJ_CHECK_TYPE(FullscreenHandler);
-
 	return this->fullscreen;
 }
 
 void FullscreenHandler::hideWidget(MainWindow* win, string widgetName)
 {
-	XOJ_CHECK_TYPE(FullscreenHandler);
-
 	if ("sidebarContents" == widgetName && settings->isSidebarVisible())
 	{
 		this->sidebarHidden = true;
@@ -49,7 +39,7 @@ void FullscreenHandler::hideWidget(MainWindow* win, string widgetName)
 		GtkWidget* mainMenubar = win->get("mainMenubar");
 		GtkWidget* mainBox = win->get("mainBox");
 
-		if (mainMenubar == NULL || !gtk_widget_is_visible(mainMenubar))
+		if (mainMenubar == nullptr || !gtk_widget_is_visible(mainMenubar))
 		{
 			// Menu not visible (global menu or something like this)
 			return;
@@ -73,26 +63,10 @@ void FullscreenHandler::hideWidget(MainWindow* win, string widgetName)
 	}
 
 	return;
-
-	GtkWidget* w = win->get(widgetName);
-	if (w == NULL)
-	{
-		g_warning("Fullscreen: Try to hide \"%s\", but coulden't find it. Wrong entry in ~/"
-				  CONFIG_DIR "/" SETTINGS_XML_FILE "?", widgetName.c_str());
-		return;
-	}
-
-	if (gtk_widget_get_visible(w))
-	{
-		gtk_widget_hide(w);
-		hiddenFullscreenWidgets.push_back(w);
-	}
 }
 
 void FullscreenHandler::enableFullscreen(MainWindow* win)
 {
-	XOJ_CHECK_TYPE(FullscreenHandler);
-
 	gtk_window_fullscreen((GtkWindow*) *win);
 
 	string hideWidgets = settings->getFullscreenHideElements();
@@ -104,8 +78,6 @@ void FullscreenHandler::enableFullscreen(MainWindow* win)
 
 void FullscreenHandler::disableFullscreen(MainWindow* win)
 {
-	XOJ_CHECK_TYPE(FullscreenHandler);
-
 	gtk_window_unfullscreen((GtkWindow*) *win);
 
 	for (GtkWidget* w : hiddenFullscreenWidgets)
@@ -146,8 +118,6 @@ void FullscreenHandler::disableFullscreen(MainWindow* win)
 
 void FullscreenHandler::setFullscreen(MainWindow* win, bool enabled)
 {
-	XOJ_CHECK_TYPE(FullscreenHandler);
-
 	if (enabled)
 	{
 		enableFullscreen(win);
@@ -164,71 +134,66 @@ void FullscreenHandler::setFullscreen(MainWindow* win, bool enabled)
 // Widget which allow to hide the menu, but let the shortcuts active
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef struct
+struct GtkInvisibleMenuClass
 {
 	GtkFixedClass parent_class;
-} GtkInvisibleMenuClass;
+};
 
-typedef struct
+struct GtkInvisibleMenu
 {
 	GtkFixed widget;
-} GtkInvisibleMenu;
+};
 
-static void gtk_invisible_menu_get_preferred_width(GtkWidget *widget, gint *minimum, gint *natural)
+static void gtk_invisible_menu_get_preferred_width(GtkWidget* /*widget*/, gint* minimum, gint* natural)
 {
 	*minimum = 0;
 	*natural = 0;
 }
 
-static void gtk_invisible_menu_get_preferred_height(GtkWidget *widget, gint *minimum, gint *natural)
+static void gtk_invisible_menu_get_preferred_height(GtkWidget* /*widget*/, gint* minimum, gint* natural)
 {
 	*minimum = 0;
 	*natural = 0;
 }
 
-static gboolean gtk_invisible_menu_draw(GtkWidget *widget, cairo_t *cr)
+static auto gtk_invisible_menu_draw(GtkWidget* /*widget*/, cairo_t * /*cr*/) -> gboolean
 {
-	return FALSE;
+	return false;
 }
 
 static void gtk_invisible_menu_class_init(GtkInvisibleMenuClass* klass)
 {
-	GtkWidgetClass* widget_class;
-
-	widget_class = (GtkWidgetClass*) klass;
+	auto widget_class = reinterpret_cast<GtkWidgetClass*>(klass);
 	widget_class->get_preferred_width = gtk_invisible_menu_get_preferred_width;
 	widget_class->get_preferred_height = gtk_invisible_menu_get_preferred_height;
 	widget_class->draw = gtk_invisible_menu_draw;
 }
 
-GType gtk_invisible_get_type()
+auto gtk_invisible_get_type() -> GType
 {
 	static GType gtk_invisible_menu_type = 0;
 
 	if (!gtk_invisible_menu_type)
 	{
-		static const GTypeInfo gtk_inivisible_menu_info =
-		{
-			sizeof(GtkInvisibleMenuClass),
-			// base initialize
-			NULL,
-			// base finalize
-			NULL,
-			// class initialize
-			(GClassInitFunc) gtk_invisible_menu_class_init,
-			// class finalize
-			NULL,
-			// class data,
-			NULL,
-			// instance size
-			sizeof(GtkInvisibleMenu),
-			// n_preallocs
-			0,
-			// instance init
-			NULL,
-			// value table
-			(const GTypeValueTable*) NULL
-		};
+		static const GTypeInfo gtk_inivisible_menu_info = {sizeof(GtkInvisibleMenuClass),
+		                                                   // base initialize
+		                                                   nullptr,
+		                                                   // base finalize
+		                                                   nullptr,
+		                                                   // class initialize
+		                                                   (GClassInitFunc) gtk_invisible_menu_class_init,
+		                                                   // class finalize
+		                                                   nullptr,
+		                                                   // class data,
+		                                                   nullptr,
+		                                                   // instance size
+		                                                   sizeof(GtkInvisibleMenu),
+		                                                   // n_preallocs
+		                                                   0,
+		                                                   // instance init
+		                                                   nullptr,
+		                                                   // value table
+		                                                   (const GTypeValueTable*) nullptr};
 
 		gtk_invisible_menu_type = g_type_register_static(GTK_TYPE_FIXED,
 		                                          "GtkInvisibleMenu",
@@ -239,7 +204,7 @@ GType gtk_invisible_get_type()
 	return gtk_invisible_menu_type;
 }
 
-GtkWidget* gtk_invisible_new()
+auto gtk_invisible_new() -> GtkWidget*
 {
-	return GTK_WIDGET(g_object_new(gtk_invisible_get_type(), NULL));
+	return GTK_WIDGET(g_object_new(gtk_invisible_get_type(), nullptr));
 }

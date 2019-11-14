@@ -5,8 +5,6 @@
 
 XojPage::XojPage(double width, double height)
 {
-	XOJ_INIT_TYPE(XojPage);
-
 	this->bgType.format = PageTypeFormat::Lined;
 
 	this->width = width;
@@ -15,28 +13,20 @@ XojPage::XojPage(double width, double height)
 
 XojPage::~XojPage()
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	for (Layer* l : this->layer)
 	{
 		delete l;
 	}
 	this->layer.clear();
-
-	XOJ_RELEASE_TYPE(XojPage);
 }
 
 void XojPage::reference()
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->ref++;
 }
 
 void XojPage::unreference()
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->ref--;
 	if (ref < 1)
 	{
@@ -44,9 +34,9 @@ void XojPage::unreference()
 	}
 }
 
-XojPage* XojPage::clone()
+auto XojPage::clone() -> XojPage*
 {
-	XojPage* page = new XojPage(this->width, this->height);
+	auto* page = new XojPage(this->width, this->height);
 
 	page->backgroundImage = this->backgroundImage;
 	for (Layer* l : this->layer)
@@ -64,16 +54,12 @@ XojPage* XojPage::clone()
 
 void XojPage::addLayer(Layer* layer)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->layer.push_back(layer);
-	this->currentLayer = size_t_npos;
+	this->currentLayer = npos;
 }
 
 void XojPage::insertLayer(Layer* layer, int index)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	if (index >= (int)this->layer.size())
 	{
 		addLayer(layer);
@@ -86,8 +72,6 @@ void XojPage::insertLayer(Layer* layer, int index)
 
 void XojPage::removeLayer(Layer* layer)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	for (unsigned int i = 0; i < this->layer.size(); i++)
 	{
 		if (layer == this->layer[i])
@@ -96,7 +80,7 @@ void XojPage::removeLayer(Layer* layer)
 			break;
 		}
 	}
-	this->currentLayer = size_t_npos;
+	this->currentLayer = npos;
 }
 
 void XojPage::setSelectedLayerId(int id)
@@ -104,28 +88,22 @@ void XojPage::setSelectedLayerId(int id)
 	this->currentLayer = id;
 }
 
-vector<Layer*>* XojPage::getLayers()
+auto XojPage::getLayers() -> vector<Layer*>*
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return &this->layer;
 }
 
-size_t XojPage::getLayerCount()
+auto XojPage::getLayerCount() -> size_t
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->layer.size();
 }
 
 /**
  * Layer ID 0 = Background, Layer ID 1 = Layer 1
  */
-int XojPage::getSelectedLayerId()
+auto XojPage::getSelectedLayerId() -> int
 {
-	XOJ_CHECK_TYPE(XojPage);
-
-	if (this->currentLayer == size_t_npos)
+	if (this->currentLayer == npos)
 	{
 		this->currentLayer = this->layer.size();
 	}
@@ -135,8 +113,6 @@ int XojPage::getSelectedLayerId()
 
 void XojPage::setLayerVisible(int layerId, bool visible)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	if (layerId < 0)
 	{
 		return;
@@ -157,10 +133,8 @@ void XojPage::setLayerVisible(int layerId, bool visible)
 	this->layer[layerId]->setVisible(visible);
 }
 
-bool XojPage::isLayerVisible(int layerId)
+auto XojPage::isLayerVisible(int layerId) -> bool
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	if (layerId < 0)
 	{
 		return false;
@@ -180,17 +154,13 @@ bool XojPage::isLayerVisible(int layerId)
 	return this->layer[layerId]->isVisible();
 }
 
-bool XojPage::isLayerVisible(Layer* layer)
+auto XojPage::isLayerVisible(Layer* layer) -> bool
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return layer->isVisible();
 }
 
 void XojPage::setBackgroundPdfPageNr(size_t page)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->pdfBackgroundPage = page;
 	this->bgType.format = PageTypeFormat::Pdf;
 	this->bgType.config = "";
@@ -198,51 +168,37 @@ void XojPage::setBackgroundPdfPageNr(size_t page)
 
 void XojPage::setBackgroundColor(int color)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->backgroundColor = color;
 }
 
-int XojPage::getBackgroundColor()
+auto XojPage::getBackgroundColor() -> int
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->backgroundColor;
 }
 
 void XojPage::setSize(double width, double height)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->width = width;
 	this->height = height;
 }
 
-double XojPage::getWidth() const
+auto XojPage::getWidth() const -> double
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->width;
 }
 
-double XojPage::getHeight() const
+auto XojPage::getHeight() const -> double
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->height;
 }
 
-size_t XojPage::getPdfPageNr()
+auto XojPage::getPdfPageNr() -> size_t
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->pdfBackgroundPage;
 }
 
-bool XojPage::isAnnotated()
+auto XojPage::isAnnotated() -> bool
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	for (Layer* l : this->layer)
 	{
 		if (l->isAnnotated())
@@ -255,13 +211,11 @@ bool XojPage::isAnnotated()
 
 void XojPage::setBackgroundType(PageType bgType)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->bgType = bgType;
 
 	if (!bgType.isPdfPage())
 	{
-		this->pdfBackgroundPage = size_t_npos;
+		this->pdfBackgroundPage = npos;
 	}
 	if (!bgType.isImagePage())
 	{
@@ -269,31 +223,23 @@ void XojPage::setBackgroundType(PageType bgType)
 	}
 }
 
-PageType XojPage::getBackgroundType()
+auto XojPage::getBackgroundType() -> PageType
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->bgType;
 }
 
-BackgroundImage& XojPage::getBackgroundImage()
+auto XojPage::getBackgroundImage() -> BackgroundImage&
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	return this->backgroundImage;
 }
 
 void XojPage::setBackgroundImage(BackgroundImage img)
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	this->backgroundImage = img;
 }
 
-Layer* XojPage::getSelectedLayer()
+auto XojPage::getSelectedLayer() -> Layer*
 {
-	XOJ_CHECK_TYPE(XojPage);
-
 	if (this->layer.empty())
 	{
 		addLayer(new Layer());

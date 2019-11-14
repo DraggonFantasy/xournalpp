@@ -8,25 +8,16 @@
 
 ZoomControl::ZoomControl()
 {
-	XOJ_INIT_TYPE(ZoomControl);
-
 	this->zoomStep = DEFAULT_ZOOM_STEP * this->zoom100Value;
 	this->zoomStepScroll = DEFAULT_ZOOM_STEP_SCROLL * this->zoom100Value;
 	this->zoomMax = DEFAULT_ZOOM_MAX * this->zoom100Value;
 	this->zoomMin = DEFAULT_ZOOM_MIN * this->zoom100Value;
 }
 
-ZoomControl::~ZoomControl()
-{
-	XOJ_CHECK_TYPE(ZoomControl);
-
-	XOJ_RELEASE_TYPE(ZoomControl);
-}
+ZoomControl::~ZoomControl() = default;
 
 void ZoomControl::zoomOneStep(bool zoomIn, double x, double y)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if(this->zoomPresentationMode)
 	{
 		return;
@@ -48,15 +39,13 @@ void ZoomControl::zoomOneStep(bool zoomIn, double x, double y)
 	{
 		newZoom = this->zoom - this->zoomStep;
 	}
-	this->zoomSequnceChange(newZoom, false);
+	this->zoomSequenceChange(newZoom, false);
 
 	endZoomSequence();
 }
 
 void ZoomControl::zoomScroll(bool zoomIn, double x, double y)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if(this->zoomPresentationMode)
 	{
 		return;
@@ -83,7 +72,7 @@ void ZoomControl::zoomScroll(bool zoomIn, double x, double y)
 	{
 		newZoom = this->zoom - this->zoomStepScroll;
 	}
-	this->zoomSequnceChange(newZoom, false);
+	this->zoomSequenceChange(newZoom, false);
 }
 
 /**
@@ -94,8 +83,6 @@ void ZoomControl::zoomScroll(bool zoomIn, double x, double y)
  */
 void ZoomControl::startZoomSequence(double centerX, double centerY)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	Rectangle rect = getVisibleRect();
 	if (centerX == -1 || centerY == -1)
 	{
@@ -120,10 +107,8 @@ void ZoomControl::startZoomSequence(double centerX, double centerY)
  * @param zoom Current zoom value
  * @param relative If the zoom is relative to the start value (for Gesture)
  */
-void ZoomControl::zoomSequnceChange(double zoom, bool relative)
+void ZoomControl::zoomSequenceChange(double zoom, bool relative)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if (relative && this->zoomSequenceStart != -1)
 	{
 		zoom *= zoomSequenceStart;
@@ -137,8 +122,6 @@ void ZoomControl::zoomSequnceChange(double zoom, bool relative)
  */
 void ZoomControl::endZoomSequence()
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	scrollPositionX = -1;
 	scrollPositionY = -1;
 
@@ -148,10 +131,8 @@ void ZoomControl::endZoomSequence()
 /**
  * Get visible rect on xournal view, for Zoom Gesture
  */
-Rectangle ZoomControl::getVisibleRect()
+auto ZoomControl::getVisibleRect() -> Rectangle
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	GtkWidget* widget = view->getWidget();
 	Layout* layout = gtk_xournal_get_layout(widget);
 	return layout->getVisibleRect();
@@ -166,10 +147,8 @@ void ZoomControl::setScrollPositionAfterZoom(double x, double y)
 /**
  * Zoom to correct position on zooming
  */
-std::tuple<double, double> ZoomControl::getScrollPositionAfterZoom()
+auto ZoomControl::getScrollPositionAfterZoom() -> std::tuple<double, double>
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if (this->zoomSequenceStart == -1 )
 	{
 		return std::make_tuple(-1,-1);
@@ -183,15 +162,11 @@ std::tuple<double, double> ZoomControl::getScrollPositionAfterZoom()
 
 void ZoomControl::addZoomListener(ZoomListener* listener)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->listener.push_back(listener);
 }
 
 void ZoomControl::initZoomHandler(GtkWidget* widget, XournalView* view, Control* control)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	g_signal_connect(widget, "scroll_event", G_CALLBACK(onScrolledwindowMainScrollEvent), this);
 
 	g_signal_connect(widget, "size-allocate", G_CALLBACK(onWidgetSizeChangedEvent), this);
@@ -203,8 +178,6 @@ void ZoomControl::initZoomHandler(GtkWidget* widget, XournalView* view, Control*
 
 void ZoomControl::fireZoomChanged()
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if (this->zoom < this->zoomMin)
 	{
 		this->zoom = this->zoomMin;
@@ -223,40 +196,30 @@ void ZoomControl::fireZoomChanged()
 
 void ZoomControl::fireZoomRangeValueChanged()
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	for (ZoomListener* z : this->listener)
 	{
 		z->zoomRangeValuesChanged();
 	}
 }
 
-double ZoomControl::getZoom()
+auto ZoomControl::getZoom() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoom;
 }
 
-double ZoomControl::getZoomReal()
+auto ZoomControl::getZoomReal() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoom / this->zoom100Value;
 }
 
 void ZoomControl::setZoom(double zoom)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoom = zoom;
 	fireZoomChanged();
 }
 
 void ZoomControl::setZoom100Value(double zoom)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoom100Value = zoom;
 	setZoomStep(this->zoomStepReal);
 	setZoomStepScroll(this->zoomStepScrollReal);
@@ -265,10 +228,13 @@ void ZoomControl::setZoom100Value(double zoom)
 	fireZoomRangeValueChanged();
 }
 
-bool ZoomControl::updateZoomFitValue(size_t pageNo)
+auto ZoomControl::updateZoomFitValue(size_t pageNo) -> bool
 {
-	XOJ_CHECK_TYPE(ZoomControl);
+	return updateZoomFitValue(getVisibleRect(), pageNo);
+}
 
+auto ZoomControl::updateZoomFitValue(const Rectangle& widget_rect, size_t pageNo) -> bool
+{
 	if(pageNo == 0)
 	{
 		pageNo = view->getCurrentPage();
@@ -280,7 +246,6 @@ bool ZoomControl::updateZoomFitValue(size_t pageNo)
 		return false;
 	}
 
-	Rectangle widget_rect = getVisibleRect();
 	double zoom_fit_width = widget_rect.width / (page->getWidth() + 20.0);
 	if(zoom_fit_width < this->zoomMin || zoom_fit_width > this->zoomMax)
 	{
@@ -296,17 +261,13 @@ bool ZoomControl::updateZoomFitValue(size_t pageNo)
 	return true;
 }
 
-double ZoomControl::getZoomFitValue()
+auto ZoomControl::getZoomFitValue() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomFitValue;
 }
 
-bool ZoomControl::updateZoomPresentationValue(size_t pageNo)
+auto ZoomControl::updateZoomPresentationValue(size_t pageNo) -> bool
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	XojPageView* page = view->getViewFor(view->getCurrentPage());
 	if(!page)
 	{
@@ -331,24 +292,18 @@ bool ZoomControl::updateZoomPresentationValue(size_t pageNo)
 	return true;
 }
 
-double ZoomControl::getZoomPresentationValue()
+auto ZoomControl::getZoomPresentationValue() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomPresentationValue;
 }
 
-double ZoomControl::getZoom100Value()
+auto ZoomControl::getZoom100Value() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoom100Value;
 }
 
 void ZoomControl::zoom100()
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if(this->zoomPresentationMode)
 	{
 		return;
@@ -360,7 +315,7 @@ void ZoomControl::zoom100()
 	}
 
 	startZoomSequence(-1, -1);
-	this->zoomSequnceChange(this->zoom100Value, false);
+	this->zoomSequenceChange(this->zoom100Value, false);
 	endZoomSequence();
 }
 
@@ -369,7 +324,7 @@ void ZoomControl::zoomFit()
 	if(this->zoomFitMode && !this->zoomPresentationMode && this->zoom != this->zoomFitValue)
 	{
 		startZoomSequence(-1, -1);
-		this->zoomSequnceChange(this->zoomFitValue, false);
+		this->zoomSequenceChange(this->zoomFitValue, false);
 		endZoomSequence();
 	}
 }
@@ -379,15 +334,13 @@ void ZoomControl::zoomPresentation()
 	if(this->zoomPresentationMode && this->zoom != this->zoomPresentationValue)
 	{
 		startZoomSequence(-1, -1);
-		this->zoomSequnceChange(this->zoomPresentationValue, false);
+		this->zoomSequenceChange(this->zoomPresentationValue, false);
 		endZoomSequence();
 	}
 }
 
 void ZoomControl::setZoomFitMode(bool isZoomFitMode)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	if(this->zoomFitMode != isZoomFitMode)
 	{
 		this->zoomFitMode = isZoomFitMode;
@@ -400,17 +353,13 @@ void ZoomControl::setZoomFitMode(bool isZoomFitMode)
 	}
 }
 
-bool ZoomControl::isZoomFitMode()
+auto ZoomControl::isZoomFitMode() -> bool
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomFitMode;
 }
 
 void ZoomControl::setZoomPresentationMode(bool isZoomPresentationMode)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoomPresentationMode = isZoomPresentationMode;
 
 	if(isZoomPresentationMode)
@@ -419,121 +368,89 @@ void ZoomControl::setZoomPresentationMode(bool isZoomPresentationMode)
 	}
 }
 
-bool ZoomControl::isZoomPresentationMode()
+auto ZoomControl::isZoomPresentationMode() -> bool
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomPresentationMode;
 }
 
-double ZoomControl::getZoomStep()
+auto ZoomControl::getZoomStep() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomStep;
 }
 
-double ZoomControl::getZoomStepReal()
+auto ZoomControl::getZoomStepReal() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomStepReal;
 }
 
 void ZoomControl::setZoomStep(double zoomStep)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoomStepReal = zoomStep;
 	this->zoomStep = zoomStep * this->zoom100Value;
 }
 
-double ZoomControl::getZoomStepScroll()
+auto ZoomControl::getZoomStepScroll() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomStepScroll;
 }
 
-double ZoomControl::getZoomStepScrollReal()
+auto ZoomControl::getZoomStepScrollReal() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomStepScrollReal;
 }
 
 void ZoomControl::setZoomStepScroll(double zoomStep)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoomStepScrollReal = zoomStep;
 	this->zoomStepScroll = zoomStep * this->zoom100Value;
 }
 
-double ZoomControl::getZoomMax()
+auto ZoomControl::getZoomMax() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomMax;
 }
 
-double ZoomControl::getZoomMaxReal()
+auto ZoomControl::getZoomMaxReal() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomMaxReal;
 }
 
 void ZoomControl::setZoomMax(double zoomMax)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoomMaxReal = zoomMax;
 	this->zoomMax = zoomMax * this->zoom100Value;
 }
 
-double ZoomControl::getZoomMin()
+auto ZoomControl::getZoomMin() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomMin;
 }
 
-double ZoomControl::getZoomMinReal()
+auto ZoomControl::getZoomMinReal() -> double
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	return this->zoomMinReal;
 }
 
 void ZoomControl::setZoomMin(double zoomMin)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	this->zoomMinReal = zoomMin;
 	this->zoomMin = zoomMin * this->zoom100Value;
 }
 
 void ZoomControl::pageSizeChanged(size_t page)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	updateZoomPresentationValue(page);
 	updateZoomFitValue(page);
 }
 
 void ZoomControl::pageSelected(size_t page)
 {
-	XOJ_CHECK_TYPE(ZoomControl);
-
 	updateZoomPresentationValue(page);
 	updateZoomFitValue(page);
 }
 
-bool ZoomControl::onScrolledwindowMainScrollEvent(GtkWidget* widget, GdkEventScroll* event, ZoomControl* zoom)
+auto ZoomControl::onScrolledwindowMainScrollEvent(GtkWidget* widget, GdkEventScroll* event, ZoomControl* zoom) -> bool
 {
-	XOJ_CHECK_TYPE_OBJ(zoom, ZoomControl);
-
 	guint state = event->state & gtk_accelerator_get_default_mod_mask();
 
 	// do not handle e.g. ALT + Scroll (e.g. Compiz use this shortcut for setting transparency...)
@@ -572,11 +489,22 @@ bool ZoomControl::onScrolledwindowMainScrollEvent(GtkWidget* widget, GdkEventScr
 	return false;
 }
 
-bool ZoomControl::onWidgetSizeChangedEvent(GtkWidget* widget, GdkRectangle *allocation, ZoomControl* zoom)
+
+// Todo: try to connect this function with the "expose_event", it would be way cleaner and we dont need to allign/layout
+//       the pages manually, but it only works with the top Widget (GtkWindow) for now this works fine
+//       see https://stackoverflow.com/questions/1060039/gtk-detecting-window-resize-from-the-user
+auto ZoomControl::onWidgetSizeChangedEvent(GtkWidget* widget, GdkRectangle* allocation, ZoomControl* zoom) -> bool
 {
-	XOJ_CHECK_TYPE_OBJ(zoom, ZoomControl);
+	g_assert_true(widget != zoom->view->getWidget());
+
+	Rectangle r(allocation->x, allocation->y, allocation->width, allocation->height);
 
 	zoom->updateZoomPresentationValue();
-	zoom->updateZoomFitValue();
+	zoom->updateZoomFitValue(r);
+
+	auto layout = gtk_xournal_get_layout(zoom->view->getWidget());
+	layout->layoutPages(allocation->width, allocation->height);
+	gtk_widget_queue_resize(zoom->view->getWidget());
+
 	return true;
 }

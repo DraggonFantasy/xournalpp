@@ -31,9 +31,7 @@
 EditSelectionContents::EditSelectionContents(double x, double y, double width, double height, PageRef sourcePage,
                                              Layer* sourceLayer, XojPageView* sourceView)
 {
-	XOJ_INIT_TYPE(EditSelectionContents);
-
-	this->crBuffer = NULL;
+	this->crBuffer = nullptr;
 
 	this->rescaleId = 0;
 
@@ -54,8 +52,6 @@ EditSelectionContents::EditSelectionContents(double x, double y, double width, d
 
 EditSelectionContents::~EditSelectionContents()
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	if (this->rescaleId)
 	{
 		g_source_remove(this->rescaleId);
@@ -63,8 +59,6 @@ EditSelectionContents::~EditSelectionContents()
 	}
 
 	deleteViewBuffer();
-
-	XOJ_RELEASE_TYPE(EditSelectionContents);
 }
 
 /**
@@ -72,33 +66,27 @@ EditSelectionContents::~EditSelectionContents()
  */
 void EditSelectionContents::addElement(Element* e)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	this->selected.push_back(e);
 }
 
 /**
  * Returns all containig elements of this selections
  */
-vector<Element*>* EditSelectionContents::getElements()
+auto EditSelectionContents::getElements() -> vector<Element*>*
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	return &this->selected;
 }
 
 /**
  * Sets the tool size for pen or eraser, returs an undo action
- * (or NULL if nothing is done)
+ * (or nullptr if nothing is done)
  */
-UndoAction* EditSelectionContents::setSize(ToolSize size,
-                                           const double* thicknessPen,
-                                           const double* thicknessHilighter,
-                                           const double* thicknessEraser)
+auto EditSelectionContents::setSize(ToolSize size,
+                                    const double* thicknessPen,
+                                    const double* thicknessHilighter,
+                                    const double* thicknessEraser) -> UndoAction*
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
-	SizeUndoAction* undo = new SizeUndoAction(this->sourcePage, this->sourceLayer);
+	auto* undo = new SizeUndoAction(this->sourcePage, this->sourceLayer);
 
 	bool found = false;
 
@@ -106,7 +94,7 @@ UndoAction* EditSelectionContents::setSize(ToolSize size,
 	{
 		if (e->getType() == ELEMENT_STROKE)
 		{
-			Stroke* s = (Stroke*) e;
+			auto* s = (Stroke*) e;
 			StrokeTool tool = s->getToolType();
 
 			double originalWidth = s->getWidth();
@@ -149,19 +137,17 @@ UndoAction* EditSelectionContents::setSize(ToolSize size,
 	else
 	{
 		delete undo;
-		return NULL;
+		return nullptr;
 	}
 }
 
 /**
  * Fills the stroke, return an undo action
- * (Or NULL if nothing done, e.g. because there is only an image)
+ * (Or nullptr if nothing done, e.g. because there is only an image)
  */
-UndoAction* EditSelectionContents::setFill(int alphaPen, int alphaHighligther)
+auto EditSelectionContents::setFill(int alphaPen, int alphaHighligther) -> UndoAction*
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
-	FillUndoAction* undo = new FillUndoAction(this->sourcePage, this->sourceLayer);
+	auto* undo = new FillUndoAction(this->sourcePage, this->sourceLayer);
 
 	bool found = false;
 
@@ -169,7 +155,7 @@ UndoAction* EditSelectionContents::setFill(int alphaPen, int alphaHighligther)
 	{
 		if (e->getType() == ELEMENT_STROKE)
 		{
-			Stroke* s = (Stroke*) e;
+			auto* s = (Stroke*) e;
 			StrokeTool tool = s->getToolType();
 			int newFill = 128;
 
@@ -209,24 +195,22 @@ UndoAction* EditSelectionContents::setFill(int alphaPen, int alphaHighligther)
 	else
 	{
 		delete undo;
-		return NULL;
+		return nullptr;
 	}
 }
 
 /**
  * Sets the font of all containing text elements, return an undo action
- * (or NULL if there are no Text elements)
+ * (or nullptr if there are no Text elements)
  */
-UndoAction* EditSelectionContents::setFont(XojFont& font)
+auto EditSelectionContents::setFont(XojFont& font) -> UndoAction*
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	double x1 = 0.0 / 0.0;
 	double x2 = 0.0 / 0.0;
 	double y1 = 0.0 / 0.0;
 	double y2 = 0.0 / 0.0;
 
-	FontUndoAction* undo = new FontUndoAction(this->sourcePage, this->sourceLayer);
+	auto* undo = new FontUndoAction(this->sourcePage, this->sourceLayer);
 
 	for (Element* e: this->selected)
 	{
@@ -245,21 +229,21 @@ UndoAction* EditSelectionContents::setFont(XojFont& font)
 			else
 			{
 				// size with old font
-				x1 = MIN(x1, t->getX());
-				y1 = MIN(y1, t->getY());
+				x1 = std::min(x1, t->getX());
+				y1 = std::min(y1, t->getY());
 
-				x2 = MAX(x2, t->getX() + t->getElementWidth());
-				y2 = MAX(y2, t->getY() + t->getElementHeight());
+				x2 = std::max(x2, t->getX() + t->getElementWidth());
+				y2 = std::max(y2, t->getY() + t->getElementHeight());
 			}
 
 			t->setFont(font);
 
 			// size with new font
-			x1 = MIN(x1, t->getX());
-			y1 = MIN(y1, t->getY());
+			x1 = std::min(x1, t->getX());
+			y1 = std::min(y1, t->getY());
 
-			x2 = MAX(x2, t->getX() + t->getElementWidth());
-			y2 = MAX(y2, t->getY() + t->getElementHeight());
+			x2 = std::max(x2, t->getX() + t->getElementWidth());
+			y2 = std::max(y2, t->getY() + t->getElementHeight());
 		}
 	}
 
@@ -270,18 +254,16 @@ UndoAction* EditSelectionContents::setFont(XojFont& font)
 		return undo;
 	}
 	delete undo;
-	return NULL;
+	return nullptr;
 }
 
 /**
  * Set the color of all elements, return an undo action
- * (Or NULL if nothing done, e.g. because there is only an image)
+ * (Or nullptr if nothing done, e.g. because there is only an image)
  */
-UndoAction* EditSelectionContents::setColor(int color)
+auto EditSelectionContents::setColor(int color) -> UndoAction*
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
-	ColorUndoAction* undo = new ColorUndoAction(this->sourcePage, this->sourceLayer);
+	auto* undo = new ColorUndoAction(this->sourcePage, this->sourceLayer);
 
 	bool found = false;
 
@@ -307,10 +289,10 @@ UndoAction* EditSelectionContents::setColor(int color)
 	else
 	{
 		delete undo;
-		return NULL;
+		return nullptr;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -319,8 +301,6 @@ UndoAction* EditSelectionContents::setColor(int color)
  */
 void EditSelectionContents::fillUndoItem(DeleteUndoAction* undo)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	Layer* layer = this->sourceLayer;
 
 	// Always insert the elements on top
@@ -339,10 +319,8 @@ void EditSelectionContents::fillUndoItem(DeleteUndoAction* undo)
 /**
  * Callback to redrawing the buffer asynchron
  */
-bool EditSelectionContents::repaintSelection(EditSelectionContents* selection)
+auto EditSelectionContents::repaintSelection(EditSelectionContents* selection) -> bool
 {
-	XOJ_CHECK_TYPE_OBJ(selection, EditSelectionContents);
-
 	// delete the selection buffer, force a redraw
 	selection->deleteViewBuffer();
 	selection->sourceView->getXournal()->repaintSelection();
@@ -357,32 +335,26 @@ bool EditSelectionContents::repaintSelection(EditSelectionContents* selection)
  */
 void EditSelectionContents::deleteViewBuffer()
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	if (this->crBuffer)
 	{
 		cairo_surface_destroy(this->crBuffer);
-		this->crBuffer = NULL;
+		this->crBuffer = nullptr;
 	}
 }
 
 /**
  * Gets the original width of the contents
  */
-double EditSelectionContents::getOriginalWidth()
+auto EditSelectionContents::getOriginalWidth() -> double
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	return this->originalWidth;
 }
 
 /**
  * Gets the original height of the contents
  */
-double EditSelectionContents::getOriginalHeight()
+auto EditSelectionContents::getOriginalHeight() -> double
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	return this->originalHeight;
 }
 
@@ -393,8 +365,6 @@ void EditSelectionContents::finalizeSelection(double x, double y, double width, 
                                               Layer* layer, PageRef targetPage, XojPageView* targetView,
                                               UndoRedoHandler* undo)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	double fx = width / this->originalWidth;
 	double fy = height / this->originalHeight;
 
@@ -430,17 +400,17 @@ void EditSelectionContents::finalizeSelection(double x, double y, double width, 
 	}
 }
 
-double EditSelectionContents::getOriginalX()
+auto EditSelectionContents::getOriginalX() -> double
 {
 	return this->originalX;
 }
 
-double EditSelectionContents::getOriginalY()
+auto EditSelectionContents::getOriginalY() -> double
 {
 	return this->originalY;
 }
 
-XojPageView* EditSelectionContents::getSourceView()
+auto EditSelectionContents::getSourceView() -> XojPageView*
 {
 	return this->sourceView;
 }
@@ -450,8 +420,6 @@ void EditSelectionContents::updateContent(double x, double y, double rotation, d
                                           bool aspectRatio, Layer* layer, PageRef targetPage, XojPageView* targetView,
                                           UndoRedoHandler* undo, CursorSelectionType type)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	double mx = x - this->lastX;
 	double my = y - this->lastY;
 	this->rotation = rotation;
@@ -467,7 +435,6 @@ void EditSelectionContents::updateContent(double x, double y, double rotation, d
 	}
 
 	bool scale = (width != this->lastWidth || height != this->lastHeight);
-	bool rotate = (std::abs(this->rotation) > __DBL_EPSILON__);
 
 	if (type == CURSOR_SELECTION_MOVE)
 	{
@@ -529,8 +496,6 @@ void EditSelectionContents::updateContent(double x, double y, double rotation, d
 void EditSelectionContents::paint(cairo_t* cr, double x, double y, double rotation, double width, double height,
                                   double zoom)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	double fx = width / this->originalWidth;
 	double fy = height / this->originalHeight;
 
@@ -545,7 +510,7 @@ void EditSelectionContents::paint(cairo_t* cr, double x, double y, double rotati
 		this->rotation = rotation;
 	}
 
-	if (this->crBuffer == NULL)
+	if (this->crBuffer == nullptr)
 	{
 		this->crBuffer = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width * zoom, height * zoom);
 		cairo_t* cr2 = cairo_create(this->crBuffer);
@@ -591,10 +556,8 @@ void EditSelectionContents::paint(cairo_t* cr, double x, double y, double rotati
 	cairo_restore(cr);
 }
 
-UndoAction* EditSelectionContents::copySelection(PageRef page, XojPageView* view, double x, double y)
+auto EditSelectionContents::copySelection(PageRef page, XojPageView* view, double x, double y) -> UndoAction*
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	Layer* layer = page->getSelectedLayer();
 
 	vector<Element*> new_elems;
@@ -616,8 +579,6 @@ UndoAction* EditSelectionContents::copySelection(PageRef page, XojPageView* view
 
 void EditSelectionContents::serialize(ObjectOutputStream& out)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	out.writeObject("EditSelectionContents");
 
 	out.writeDouble(this->originalWidth);
@@ -634,8 +595,6 @@ void EditSelectionContents::serialize(ObjectOutputStream& out)
 
 void EditSelectionContents::readSerialized(ObjectInputStream& in)
 {
-	XOJ_CHECK_TYPE(EditSelectionContents);
-
 	in.readObject("EditSelectionContents");
 
 	this->originalWidth = in.readDouble();

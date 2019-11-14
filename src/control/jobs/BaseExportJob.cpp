@@ -9,21 +9,14 @@
 BaseExportJob::BaseExportJob(Control* control, string name)
  : BlockingJob(control, name)
 {
-	XOJ_INIT_TYPE(BaseExportJob);
 }
 
-BaseExportJob::~BaseExportJob()
-{
-	XOJ_CHECK_TYPE(BaseExportJob);
-
-	XOJ_RELEASE_TYPE(BaseExportJob);
-}
+BaseExportJob::~BaseExportJob() = default;
 
 void BaseExportJob::initDialog()
 {
 	dialog = gtk_file_chooser_dialog_new(_("Export PDF"), control->getGtkWindow(), GTK_FILE_CHOOSER_ACTION_SAVE,
-													_("_Cancel"), GTK_RESPONSE_CANCEL,
-													_("_Save"), GTK_RESPONSE_OK, NULL);
+	                                     _("_Cancel"), GTK_RESPONSE_CANCEL, _("_Save"), GTK_RESPONSE_OK, nullptr);
 
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), true);
 }
@@ -36,10 +29,8 @@ void BaseExportJob::addFileFilterToDialog(string name, string pattern)
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 }
 
-bool BaseExportJob::checkOverwriteBackgroundPDF(Path& filename)
+auto BaseExportJob::checkOverwriteBackgroundPDF(Path& filename) -> bool
 {
-	XOJ_CHECK_TYPE(BaseExportJob);
-	
 	// If the new file name (with the selected extension) is the previously selected pdf, warn the user
 	if (StringUtils::iequals(filename.str(), control->getDocument()->getPdfFilename().str()))
 	{
@@ -50,18 +41,14 @@ bool BaseExportJob::checkOverwriteBackgroundPDF(Path& filename)
 	return true;
 }
 
-string BaseExportJob::getFilterName()
+auto BaseExportJob::getFilterName() -> string
 {
-	XOJ_CHECK_TYPE(BaseExportJob);
-	
 	GtkFileFilter* filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
 	return gtk_file_filter_get_name(filter);
 }
 
-bool BaseExportJob::showFilechooser()
+auto BaseExportJob::showFilechooser() -> bool
 {
-	XOJ_CHECK_TYPE(BaseExportJob);
-
 	initDialog();
 	addFilterToDialog();
 
@@ -104,10 +91,8 @@ bool BaseExportJob::showFilechooser()
 	return true;
 }
 
-bool BaseExportJob::isUriValid(string& uri)
+auto BaseExportJob::isUriValid(string& uri) -> bool
 {
-	XOJ_CHECK_TYPE(BaseExportJob);
-
 	if (!StringUtils::startsWith(uri, "file://"))
 	{
 		string msg = FS(_F("Only local files are supported\nPath: {1}") % uri);
@@ -120,8 +105,6 @@ bool BaseExportJob::isUriValid(string& uri)
 
 void BaseExportJob::afterRun()
 {
-	XOJ_CHECK_TYPE(BaseExportJob);
-
 	if (!this->errorMsg.empty())
 	{
 		XojMsgBox::showErrorToUser(control->getGtkWindow(), this->errorMsg);

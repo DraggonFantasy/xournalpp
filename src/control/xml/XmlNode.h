@@ -44,7 +44,7 @@ public:
 
 	virtual void writeOut(OutputStream* out)
 	{
-		writeOut(out, NULL);
+		writeOut(out, nullptr);
 	}
 
 	void addChild(XmlNode* node);
@@ -54,8 +54,6 @@ protected:
 	void writeAttributes(OutputStream* out);
 
 public:
-	XOJ_TYPE_ATTRIB;
-
 protected:
 	GList* children;
 	GList* attributes;

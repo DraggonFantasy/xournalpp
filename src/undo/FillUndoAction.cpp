@@ -11,21 +11,12 @@ class FillUndoActionEntry
 public:
 	FillUndoActionEntry(Stroke* s, int originalFill, int newFill)
 	{
-		XOJ_INIT_TYPE(FillUndoActionEntry);
-
 		this->s = s;
 		this->originalFill = originalFill;
 		this->newFill = newFill;
 	}
 
-	~FillUndoActionEntry()
-	{
-		XOJ_CHECK_TYPE(FillUndoActionEntry);
-		XOJ_RELEASE_TYPE(FillUndoActionEntry);
-	}
-
-	XOJ_TYPE_ATTRIB;
-
+	~FillUndoActionEntry() = default;
 	Stroke* s;
 	int originalFill;
 	int newFill;
@@ -34,36 +25,26 @@ public:
 FillUndoAction::FillUndoAction(PageRef page, Layer* layer)
  : UndoAction("FillUndoAction")
 {
-	XOJ_INIT_TYPE(FillUndoAction);
-
 	this->page = page;
 	this->layer = layer;
 }
 
 FillUndoAction::~FillUndoAction()
 {
-	XOJ_CHECK_TYPE(FillUndoAction);
-
 	for (FillUndoActionEntry* e : this->data)
 	{
 		delete e;
 	}
 	this->data.clear();
-
-	XOJ_RELEASE_TYPE(FillUndoAction);
 }
 
 void FillUndoAction::addStroke(Stroke* s, int originalFill, int newFill)
 {
-	XOJ_CHECK_TYPE(FillUndoAction);
-
 	this->data.push_back(new FillUndoActionEntry(s, originalFill, newFill));
 }
 
-bool FillUndoAction::undo(Control* control)
+auto FillUndoAction::undo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(FillUndoAction);
-
 	if (this->data.empty())
 	{
 		return true;
@@ -85,10 +66,8 @@ bool FillUndoAction::undo(Control* control)
 	return true;
 }
 
-bool FillUndoAction::redo(Control* control)
+auto FillUndoAction::redo(Control* control) -> bool
 {
-	XOJ_CHECK_TYPE(FillUndoAction);
-
 	if (this->data.empty())
 	{
 		return true;
@@ -110,9 +89,7 @@ bool FillUndoAction::redo(Control* control)
 	return true;
 }
 
-string FillUndoAction::getText()
+auto FillUndoAction::getText() -> string
 {
-	XOJ_CHECK_TYPE(FillUndoAction);
-
 	return _("Change stroke fill");
 }

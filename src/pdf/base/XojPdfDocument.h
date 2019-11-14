@@ -27,7 +27,7 @@ public:
 	virtual ~XojPdfDocument();
 
 public:
-	void operator=(XojPdfDocument& doc);
+	XojPdfDocument& operator=(const XojPdfDocument& doc);
 	bool operator==(XojPdfDocument& doc);
 	void assign(XojPdfDocumentInterface* doc);
 	bool equals(XojPdfDocumentInterface* doc);
@@ -46,8 +46,6 @@ public:
 	XojPdfDocumentInterface* getDocumentInterface();
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 	XojPdfDocumentInterface* doc;
 };
 

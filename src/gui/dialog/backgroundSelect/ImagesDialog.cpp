@@ -9,20 +9,13 @@
 ImagesDialog::ImagesDialog(GladeSearchpath* gladeSearchPath, Document* doc, Settings* settings)
  : BackgroundSelectDialogBase(gladeSearchPath, doc, settings, "images.glade", "ImagesDialog")
 {
-	XOJ_INIT_TYPE(ImagesDialog);
-
 	loadImagesFromPages();
 
 	g_signal_connect(get("buttonOk"), "clicked", G_CALLBACK(okButtonCallback), this);
 	g_signal_connect(get("btFilechooser"), "clicked", G_CALLBACK(filechooserButtonCallback), this);
 }
 
-ImagesDialog::~ImagesDialog()
-{
-	XOJ_CHECK_TYPE(ImagesDialog);
-
-	XOJ_RELEASE_TYPE(ImagesDialog);
-}
+ImagesDialog::~ImagesDialog() = default;
 
 void ImagesDialog::loadImagesFromPages()
 {
@@ -46,17 +39,17 @@ void ImagesDialog::loadImagesFromPages()
 			continue;
 		}
 
-		ImageElementView* iv = new ImageElementView(this->elements.size(), this);
+		auto* iv = new ImageElementView(this->elements.size(), this);
 		iv->backgroundImage = p->getBackgroundImage();
 		this->elements.push_back(iv);
 	}
 }
 
-bool ImagesDialog::isImageAlreadyInTheList(BackgroundImage& image)
+auto ImagesDialog::isImageAlreadyInTheList(BackgroundImage& image) -> bool
 {
 	for (BaseElementView* v : this->elements)
 	{
-		ImageElementView* iv = (ImageElementView*)v;
+		auto* iv = (ImageElementView*) v;
 		if (iv->backgroundImage == image)
 		{
 			return true;
@@ -68,32 +61,24 @@ bool ImagesDialog::isImageAlreadyInTheList(BackgroundImage& image)
 
 void ImagesDialog::okButtonCallback(GtkButton* button, ImagesDialog* dlg)
 {
-	XOJ_CHECK_TYPE_OBJ(dlg, ImagesDialog);
-
 	dlg->confirmed = true;
 	gtk_widget_hide(dlg->window);
 }
 
 void ImagesDialog::filechooserButtonCallback(GtkButton* button, ImagesDialog* dlg)
 {
-	XOJ_CHECK_TYPE_OBJ(dlg, ImagesDialog);
-
 	dlg->selected = -2;
 	dlg->confirmed = true;
 	gtk_widget_hide(dlg->window);
 }
 
-bool ImagesDialog::shouldShowFilechooser()
+auto ImagesDialog::shouldShowFilechooser() -> bool
 {
-	XOJ_CHECK_TYPE(ImagesDialog);
-
 	return selected == -2 && confirmed;
 }
 
-BackgroundImage ImagesDialog::getSelectedImage()
+auto ImagesDialog::getSelectedImage() -> BackgroundImage
 {
-	XOJ_CHECK_TYPE(ImagesDialog);
-
 	if (confirmed && selected >= 0 && selected < (int)elements.size())
 	{
 		return ((ImageElementView*)elements[selected])->backgroundImage;
@@ -106,8 +91,6 @@ BackgroundImage ImagesDialog::getSelectedImage()
 
 void ImagesDialog::show(GtkWindow* parent)
 {
-	XOJ_CHECK_TYPE(ImagesDialog);
-
 	if (this->elements.empty())
 	{
 		this->selected = -2;

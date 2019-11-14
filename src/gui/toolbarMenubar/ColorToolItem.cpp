@@ -16,8 +16,6 @@ ColorToolItem::ColorToolItem(ActionHandler* handler, ToolHandler* toolHandler, G
    toolHandler(toolHandler),
    parent(parent)
 {
-	XOJ_INIT_TYPE(ColorToolItem);
-
 	this->group = GROUP_COLOR;
 
 	updateName();
@@ -25,11 +23,7 @@ ColorToolItem::ColorToolItem(ActionHandler* handler, ToolHandler* toolHandler, G
 
 ColorToolItem::~ColorToolItem()
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	freeIcons();
-
-	XOJ_RELEASE_TYPE(ColorToolItem);
 }
 
 /**
@@ -37,23 +31,17 @@ ColorToolItem::~ColorToolItem()
  */
 void ColorToolItem::freeIcons()
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	delete this->icon;
-	this->icon = NULL;
+	this->icon = nullptr;
 }
 
-bool ColorToolItem::isSelector()
+auto ColorToolItem::isSelector() -> bool
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	return this->action == ACTION_SELECT_COLOR_CUSTOM;
 }
 
 void ColorToolItem::updateName()
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	if (this->action == ACTION_SELECT_COLOR_CUSTOM)
 	{
 		this->name = _("Select color");
@@ -66,8 +54,6 @@ void ColorToolItem::updateName()
 
 void ColorToolItem::actionSelected(ActionGroup group, ActionType action)
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	inUpdate = true;
 	if (this->group == group && this->item)
 	{
@@ -82,8 +68,6 @@ void ColorToolItem::actionSelected(ActionGroup group, ActionType action)
 
 void ColorToolItem::enableColor(int color)
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	if (isSelector())
 	{
 		if (this->icon)
@@ -120,17 +104,13 @@ void ColorToolItem::enableColor(int color)
 	}
 }
 
-int ColorToolItem::getColor()
+auto ColorToolItem::getColor() -> int
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	return this->color;
 }
 
-string ColorToolItem::getId()
+auto ColorToolItem::getId() -> string
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	if (isSelector())
 	{
 		return "COLOR_SELECT";
@@ -143,10 +123,8 @@ string ColorToolItem::getId()
 	return id;
 }
 
-bool ColorToolItem::colorEqualsMoreOreLess(int color)
+auto ColorToolItem::colorEqualsMoreOreLess(int color) -> bool
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	if (color == -1)
 	{
 		return false;
@@ -220,8 +198,6 @@ void ColorToolItem::enable(bool enabled)
 
 void ColorToolItem::activated(GdkEvent* event, GtkMenuItem* menuitem, GtkToolButton* toolbutton)
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	if (switchToPen)
 	{
 		toolHandler->selectTool(TOOL_PEN, true);
@@ -243,10 +219,8 @@ void ColorToolItem::activated(GdkEvent* event, GtkMenuItem* menuitem, GtkToolBut
 	inUpdate = false;
 }
 
-GtkToolItem* ColorToolItem::newItem()
+auto ColorToolItem::newItem() -> GtkToolItem*
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	this->icon = new ColorSelectImage(this->color, !isSelector());
 
 	GtkToolItem* it = gtk_toggle_tool_button_new();
@@ -260,16 +234,12 @@ GtkToolItem* ColorToolItem::newItem()
 	return it;
 }
 
-string ColorToolItem::getToolDisplayName()
+auto ColorToolItem::getToolDisplayName() -> string
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	return this->name;
 }
 
-GtkWidget* ColorToolItem::getNewToolIcon()
+auto ColorToolItem::getNewToolIcon() -> GtkWidget*
 {
-	XOJ_CHECK_TYPE(ColorToolItem);
-
 	return ColorSelectImage::newColorIcon(this->color, 16, !isSelector());
 }

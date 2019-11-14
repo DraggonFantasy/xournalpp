@@ -1,19 +1,23 @@
-# Template for building Xournal++ on Linux
+# Template for setting up the Ubuntu build environment and building Xournal++ on
+# Ubuntu
 
 parameters:
   build_type: 'Debug'
   cmake_flags: ''
+  cmake_commands: ''
 
 steps:
-  - bash: |
-      sudo apt-get update
-      sudo apt-get install -y cmake ninja-build libcppunit-dev libgtk-3-dev libpoppler-glib-dev portaudio19-dev libsndfile-dev liblua5.3-dev libzip-dev
-    displayName: 'Install dependencies'
   - bash: |
       mkdir build
     displayName: 'Create build directory'
   - bash: |
+      export CXX=g++-8
+      export CC=gcc-8
       cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ parameters.build_type}} ${{ parameters.cmake_flags }}
-      cmake --build .
+      # Make sure pot is up to date with sources (maybe translation pipeline is currently running)
+      cmake --build . --target pot
+      cmake --build . --target translations
+      # Build Xournal++
+      cmake --build . ${{ parameters.cmake_commands}}
     workingDirectory: ./build
     displayName: 'Build Xournal++'

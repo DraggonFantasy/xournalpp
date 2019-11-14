@@ -31,8 +31,8 @@ public:
 
 	virtual void setLayoutSize(int width, int height) = 0;
 
-	virtual int getPrefferedWidth() = 0;
-	virtual int getPrefferedHeight() = 0;
+	virtual int getPreferredWidth() = 0;
+	virtual int getPreferredHeight() = 0;
 
 	virtual void translate(cairo_t* cr, double& x1, double& x2, double& y1, double& y2) = 0;
 	virtual void translate(double& x, double& y) = 0;
@@ -42,12 +42,10 @@ public:
 	virtual void scrollChanged() = 0;
 
 private:
-	XOJ_TYPE_ATTRIB;
-
 protected:
-	GtkAdjustment* adjHorizontal = NULL;
-	GtkAdjustment* adjVertical = NULL;
+	GtkAdjustment* adjHorizontal = nullptr;
+	GtkAdjustment* adjVertical = nullptr;
 
-	GtkWidget* xournal = NULL;
-	Layout* layout = NULL;
+	GtkWidget* xournal = nullptr;
+	Layout* layout = nullptr;
 };
